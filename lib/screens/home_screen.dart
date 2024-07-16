@@ -1,48 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/custom_pop_scope.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  DateTime? currentBackPressTime;
-
-  void onWillPop(bool isExiting) {
-    DateTime now = DateTime.now();
-    if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
-      currentBackPressTime = now;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Press again to exit'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      if (isExiting) {
-        Navigator.of(context).pop(true);
-      }
-    }
-  }
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (isExiting) => onWillPop(isExiting),
+    return CustomPopScope(
+      isRoot: true,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Home'),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-            ),
+  icon: Icon(Icons.settings),
+  onPressed: () => context.push('/settings'),
+),
+           IconButton(
+  icon: Icon(Icons.notifications),
+  onPressed: () => context.push('/notifications'),
+),
           ],
         ),
         body: Center(
@@ -70,10 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.go('/home');
                 break;
               case 1:
-                context.go('/report');
+                context.push('/report');
                 break;
               case 2:
-                context.go('/profile');
+                context.push('/profile');
                 break;
             }
           },

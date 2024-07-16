@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/custom_pop_scope.dart';
 
 class SignUpScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -7,18 +8,14 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (isExiting) {
-        if (isExiting) {
-          context.go('/');
-        }
-      },
+    return CustomPopScope(
+      backPath: '/',
       child: Scaffold(
         appBar: AppBar(
           title: Text('Sign Up'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: () => context.go('/'),
+            onPressed: () {Future.microtask(() => context.go('/home'));}
           ),
         ),
         body: Padding(
@@ -35,7 +32,7 @@ class SignUpScreen extends StatelessWidget {
                 obscureText: true,
               ),
               ElevatedButton(
-                onPressed: () => context.go('/otp'),
+                onPressed: () => context.push('/otp'),
                 child: Text('Sign Up'),
               ),
             ],

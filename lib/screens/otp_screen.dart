@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/custom_pop_scope.dart';
 
 class OTPScreen extends StatelessWidget {
   final TextEditingController otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (isExiting) {
-        if (isExiting) {
-          context.go('/signup');
-        }
-      },
+    return CustomPopScope(
+      backPath: '/signup',
       child: Scaffold(
         appBar: AppBar(
           title: Text('OTP Verification'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: () => context.go('/signup'),
+            onPressed: () {Future.microtask(() => context.go('/home'));},
           ),
         ),
         body: Padding(
