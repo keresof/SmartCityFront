@@ -22,20 +22,20 @@ class ReportService {
     );
   }
 
-  Future<List<Report>> fetchReports() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+  // Future<List<Report>> fetchReports() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
 
-    final response = await _dio.get(
-      'https://your-backend-url.com/api/reports',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
+  //   final response = await _dio.get(
+  //     'https://your-backend-url.com/api/reports',
+  //     options: Options(headers: {'Authorization': 'Bearer $token'}),
+  //   );
 
-    if (response.statusCode == 200) {
-      return (response.data as List)
-          .map((data) => Report.fromJson(data))
-          .toList();
-    }
-    return [];
-  }
+  //   if (response.statusCode == 200) {
+  //     return (response.data as List)
+  //         .map((data) => Report.fromJson(data))
+  //         .toList();
+  //   }
+  //   return [];
+  // }
 }

@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/custom_pop_scope.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:smart_city_app/models/report.dart';
+import 'package:smart_city_app/models/user_reports.dart';
+import '../widgets/custom_pop_scope.dart';
 
 class ReportScreen extends StatefulWidget {
   @override
@@ -15,6 +18,7 @@ class _ReportScreenState extends State<ReportScreen> {
   List<XFile> images = [];
   String? selectedCategory;
   LatLng? selectedLocation;
+  String? selectedAddress;
 
   List<String> categories = [
     'Road Issue',
@@ -35,30 +39,44 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  void _selectLocation() async {
-    // This is a placeholder. You'll need to implement a proper map selection screen.
+  void _removeImage(int index) {
+    setState(() {
+      images.removeAt(index);
+    });
+  }
+
+  Future<void> _selectLocation() async {
     final LatLng? result = await context.push<LatLng>('/map-selection');
     if (result != null) {
       setState(() {
         selectedLocation = result;
       });
+      _updateAddress();
     }
   }
 
-  bool _validateForm() {
-    if (selectedCategory == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a category')));
-      return false;
+  Future<void> _updateAddress() async {
+    if (selectedLocation != null) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          selectedLocation!.latitude,
+          selectedLocation!.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          setState(() {
+            selectedAddress = '${place.street} ${place.subThoroughfare}, '
+                '${place.thoroughfare}, ${place.subLocality}, '
+                '${place.locality}, ${place.postalCode}, ${place.country}';
+          });
+        }
+      } catch (e) {
+        print('Error getting address: $e');
+        setState(() {
+          selectedAddress = 'Unable to fetch address';
+        });
+      }
     }
-    if (descriptionController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a description')));
-      return false;
-    }
-    if (selectedLocation == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a location')));
-      return false;
-    }
-    return true;
   }
 
   void _showPreviewDialog() {
@@ -68,26 +86,53 @@ class _ReportScreenState extends State<ReportScreen> {
         return AlertDialog(
           title: Text('Preview Report'),
           content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Category: $selectedCategory'),
-                Text('Description: ${descriptionController.text}'),
-                Text('Location: ${selectedLocation!.latitude}, ${selectedLocation!.longitude}'),
-                Text('Images: ${images.length}'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Category: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(descriptionController.text),
+                SizedBox(height: 8),
+                Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(selectedAddress ?? 'Address not available'),
+                SizedBox(height: 8),
+                if (selectedLocation != null)
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: selectedLocation!,
+                        zoom: 15,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: MarkerId('selected_location'),
+                          position: selectedLocation!,
+                        ),
+                      },
+                      liteModeEnabled: true,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                    ),
+                  ),
+                SizedBox(height: 8),
+                Text('Number of Images: ${images.length}', style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: Text('Cancel'),
-              onPressed: () => context.pop(),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            TextButton(
+            ElevatedButton(
               child: Text('Submit'),
               onPressed: () {
-                // TODO: Implement actual submission logic here
-                context.pop();
-                context.go('/home');
+                Navigator.of(context).pop();
+                _submitReport();
               },
             ),
           ],
@@ -95,6 +140,34 @@ class _ReportScreenState extends State<ReportScreen> {
       },
     );
   }
+
+void _submitReport() {
+  if (selectedCategory == null || selectedLocation == null || selectedAddress == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please fill in all required fields')),
+    );
+    return;
+  }
+
+  final newReport = Report(
+    id: DateTime.now().millisecondsSinceEpoch.toString(), // Use a proper ID in production
+    category: selectedCategory!,
+    description: descriptionController.text,
+    location: selectedLocation!,
+    address: selectedAddress!,
+    imagePaths: images.map((image) => image.path).toList(),
+    createdAt: DateTime.now(),
+  );
+
+  // In a real app, you'd send this to your backend
+  // For now, we'll use a static list to store reports
+  UserReports.addReport(newReport);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Report submitted successfully')),
+  );
+  context.go('/home');
+}
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +208,17 @@ class _ReportScreenState extends State<ReportScreen> {
                 ElevatedButton(
                   onPressed: _selectLocation,
                   child: Text(selectedLocation != null 
-                    ? 'Location selected: ${selectedLocation!.latitude}, ${selectedLocation!.longitude}' 
+                    ? 'Change Location' 
                     : 'Select Location'),
                 ),
+                if (selectedAddress != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      selectedAddress!,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ),
                 SizedBox(height: 16.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -166,74 +247,29 @@ class _ReportScreenState extends State<ReportScreen> {
                         ),
                         itemCount: images.length,
                         itemBuilder: (context, index) {
-                          return Image.file(
-                            File(images[index].path),
-                            fit: BoxFit.cover,
+                          return Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.file(
+                                File(images[index].path),
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: IconButton(
+                                  icon: Icon(Icons.cancel, color: Colors.red),
+                                  onPressed: () => _removeImage(index),
+                                ),
+                              ),
+                            ],
                           );
                         },
                       )
                     : Text('No images selected.', textAlign: TextAlign.center),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () {
-                    if (_validateForm()) {
-                      _showPreviewDialog(){
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Preview Report'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Category: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(descriptionController.text),
-              SizedBox(height: 8),
-              Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('${selectedLocation?.latitude.toStringAsFixed(6)}, ${selectedLocation?.longitude.toStringAsFixed(6)}'),
-              SizedBox(height: 8),
-              Text('Images: ${images.length}', style: TextStyle(fontWeight: FontWeight.bold)),
-              if (images.isNotEmpty)
-                Container(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: images.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Image.file(File(images[index].path), width: 80, height: 80, fit: BoxFit.cover),
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          ElevatedButton(
-            child: Text('Submit'),
-            onPressed: () {
-              // TODO: Implement actual submission logic here
-              Navigator.of(context).pop();
-              context.go('/home');
-            },
-          ),
-        ],
-      );
-    },
-  );
-};
-                    }
-                  },
+                  onPressed: _showPreviewDialog,
                   child: Text('Preview Report'),
                 ),
               ],

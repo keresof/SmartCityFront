@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_city_app/screens/report_details_screen.dart';
 import 'models/app_state.dart';
 import 'screens/login_screen.dart';
 import 'screens/map_selections_screen.dart';
@@ -28,6 +29,10 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         builder: (context, state) => LoginScreen(),
+      ),
+      GoRoute(
+      path: '/report-details',
+      builder: (context, state) => ReportDetailsScreen(report: state.extra),
       ),
       GoRoute(
         path: '/signup',

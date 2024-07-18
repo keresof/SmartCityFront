@@ -1,10 +1,13 @@
 // lib/screens/profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/report_card.dart';
+import '../models/report.dart';
+import '../models/user_reports.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> reports = [
+  final List<Map<String, dynamic>> mockReports = [
     {
       'category': 'Road Issue',
       'description': 'Large pothole on Main Street',
@@ -27,6 +30,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userReports = UserReports.getReports();
+    final allReports = [...userReports, ...mockReports];
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -64,10 +70,12 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                        CircleAvatar(
+                      CircleAvatar(
                         radius: 30,
-                        backgroundImage: AssetImage('asset/image/profile.svg'),
-                        ),
+                        child: SvgPicture.asset(
+                          'asset/image/profile.svg',
+                          fit: BoxFit.cover,)
+                      ),
                       SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,18 +108,30 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          SliverList(
+           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final report = reports[index];
-                return ReportCard(
-                  category: report['category'],
-                  description: report['description'],
-                  status: report['status'],
-                  date: report['date'],
+                final report = allReports[index];
+                return GestureDetector(
+                  onTap: () {
+                    context.push('/report-details', extra: report);
+                  },
+                  child: report is Report
+                    ? ReportCard(
+                        category: report.category,
+                        description: report.description,
+                        status: report.status,
+                        date: report.createdAt,
+                      )
+                    : ReportCard(
+                        category: (report as Map<String, dynamic>)['category'],
+                        description: (report)['description'],
+                        status: (report)['status'],
+                        date: (report)['date'],
+                      ),
                 );
               },
-              childCount: reports.length,
+              childCount: allReports.length,
             ),
           ),
         ],

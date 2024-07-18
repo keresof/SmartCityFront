@@ -3,17 +3,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
-
-
 class MapSelectionScreen extends StatefulWidget {
   @override
   _MapSelectionScreenState createState() => _MapSelectionScreenState();
 }
 
 class _MapSelectionScreenState extends State<MapSelectionScreen> {
-  GoogleMapController? _controller;
-  LatLng? _selectedLocation;
-  bool _isLoading = false;
+  GoogleMapController? _mapController;
+  LatLng _centerLocation = LatLng(0, 0);
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -21,37 +19,71 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
     _getCurrentLocation();
   }
 
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isLoading = true);
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Location permissions are permanently denied');
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final newLocation = LatLng(position.latitude, position.longitude);
+      setState(() {
+        _centerLocation = newLocation;
+      });
+      
+      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
+    } catch (e) {
+      print("Error getting location: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to get current location: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    setState(() {
+      _centerLocation = position.target;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Select Location')),
+      appBar: AppBar(
+        title: Text('Select Location'),
+      ),
       body: Stack(
         children: [
           GoogleMap(
+            onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: _selectedLocation ?? LatLng(0, 0),
-              zoom: 14,
+              target: _centerLocation,
+              zoom: 15,
             ),
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
-            },
-            onTap: (LatLng location) {
-              setState(() {
-                _selectedLocation = location;
-              });
-            },
-            markers: _selectedLocation != null
-                ? {
-                    Marker(
-                      markerId: MarkerId('selected_location'),
-                      position: _selectedLocation!,
-                    )
-                  }
-                : {},
+            onCameraMove: _onCameraMove,
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
             zoomControlsEnabled: true,
-            mapType: MapType.normal,
+          ),
+          Center(
+            child: Icon(Icons.location_pin, color: Colors.red, size: 50),
           ),
           Positioned(
             bottom: 16,
@@ -66,9 +98,9 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
                 SizedBox(height: 8),
                 ElevatedButton(
                   child: Text('Confirm Selected Location'),
-                  onPressed: _selectedLocation != null
-                      ? () => context.pop(_selectedLocation)
-                      : null,
+                  onPressed: () {
+                    context.pop(_centerLocation);
+                  },
                 ),
               ],
             ),
@@ -81,38 +113,5 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _getCurrentLocation() async {
-    setState(() => _isLoading = true);
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        throw Exception('Location permissions are permanently denied');
-      }
-
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      setState(() {
-        _selectedLocation = LatLng(position.latitude, position.longitude);
-      });
-      _controller?.animateCamera(
-        CameraUpdate.newLatLngZoom(_selectedLocation!, 14),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to get current location: ${e.toString()}')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
   }
 }
