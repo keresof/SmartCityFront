@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomPopScope extends StatelessWidget {
@@ -15,22 +16,23 @@ class CustomPopScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (isExiting) {
-        if (isExiting) {
-          if (isRoot) {
-            _showExitConfirmationDialog(context);
-          } else if (backPath != null) {
-            context.go(backPath!);
-          }
+    return WillPopScope(
+      onWillPop: () async {
+        if (isRoot) {
+          final shouldPop = await _showExitConfirmationDialog(context);
+          return shouldPop;
+        } else if (backPath != null) {
+          context.go(backPath!);
+          return false;
         }
+        return true;
       },
       child: child,
     );
   }
 
-  void _showExitConfirmationDialog(BuildContext context) {
-    showDialog(
+  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    final result = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -47,12 +49,17 @@ class CustomPopScope extends StatelessWidget {
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(context).pop(true);
-                Navigator.of(context).pop(true); // Actually exit the app
               },
             ),
           ],
         );
       },
     );
+
+    if (result == true) {
+      SystemNavigator.pop(); // This will close the app
+    }
+
+    return false; // Prevent default back button behavior
   }
 }

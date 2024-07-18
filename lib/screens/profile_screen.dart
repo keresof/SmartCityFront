@@ -1,59 +1,120 @@
+// lib/screens/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/custom_pop_scope.dart';
+import '../widgets/report_card.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> reports = [
+    {
+      'category': 'Road Issue',
+      'description': 'Large pothole on Main Street',
+      'status': 'Pending',
+      'date': DateTime.now().subtract(const Duration(days: 2)),
+    },
+    {
+      'category': 'Streetlight Problem',
+      'description': 'Broken streetlight near Central Park',
+      'status': 'In Progress',
+      'date': DateTime.now().subtract(const Duration(days: 5)),
+    },
+    {
+      'category': 'Garbage',
+      'description': 'Overflowing trash bins on Oak Avenue',
+      'status': 'Resolved',
+      'date': DateTime.now().subtract(const Duration(days: 10)),
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return CustomPopScope(
-      backPath: '/home',
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-          actions: [
-            IconButton(
-  icon: Icon(Icons.settings),
-  onPressed: () => context.push('/settings'),
-),
-           IconButton(
-  icon: Icon(Icons.notifications),
-  onPressed: () => context.push('/notifications'),
-),
-          ],
-        ),
-        body: Center(
-          child: Text('User Profile'),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200.0,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text('John Doe'),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    'asset/image/profile_background.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black54],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.report),
-              label: 'Report',
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                        CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage('asset/image/profile.svg'),
+                        ),
+                      SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'John Doe',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          Text(
+                            'john.doe@example.com',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // TODO: Implement edit profile functionality
+                    },
+                    child: const Text('Edit Profile'),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Your Reports',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final report = reports[index];
+                return ReportCard(
+                  category: report['category'],
+                  description: report['description'],
+                  status: report['status'],
+                  date: report['date'],
+                );
+              },
+              childCount: reports.length,
             ),
-          ],
-          currentIndex: 2,
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                context.go('/home');
-                break;
-              case 1:
-                context.push('/report');
-                break;
-              case 2:
-                context.go('/profile');
-                break;
-            }
-          },
-        ),
+          ),
+        ],
       ),
     );
   }
