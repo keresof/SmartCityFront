@@ -14,7 +14,7 @@ class OTPScreen extends StatelessWidget {
           title: Text('OTP Verification'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: () {Future.microtask(() => context.go('/home'));},
+            onPressed: () {Future.microtask(() => context.go('/signup'));},
           ),
         ),
         body: Padding(

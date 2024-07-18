@@ -42,7 +42,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => context.push('/signup'),
+                  onPressed: () => context.go('/signup'),
                   child: Text('Don\'t have an account? Sign Up'),
                 ),
                 SizedBox(height: 10),
@@ -55,7 +55,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 TextButton(
-                  onPressed: () => context.push('/email-login'),
+                  onPressed: () => context.go('/email-login'),
                   child: Text('Login with Email'),
                 ),
               ],

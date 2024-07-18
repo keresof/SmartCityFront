@@ -15,7 +15,7 @@ class SignUpScreen extends StatelessWidget {
           title: Text('Sign Up'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
-            onPressed: () {Future.microtask(() => context.go('/home'));}
+            onPressed: ()=> context.go('/')
           ),
         ),
         body: Padding(
@@ -32,7 +32,7 @@ class SignUpScreen extends StatelessWidget {
                 obscureText: true,
               ),
               ElevatedButton(
-                onPressed: () => context.push('/otp'),
+                onPressed: () => context.go('/otp'),
                 child: Text('Sign Up'),
               ),
             ],

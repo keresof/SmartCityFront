@@ -46,10 +46,10 @@ class HomeScreen extends StatelessWidget {
                 context.go('/home');
                 break;
               case 1:
-                context.push('/report');
+                context.go('/report');
                 break;
               case 2:
-                context.push('/profile');
+                context.go('/profile');
                 break;
             }
           },

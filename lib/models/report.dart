@@ -1,3 +1,4 @@
+
 class Report {
   final int id;
   final String description;
@@ -15,3 +16,4 @@ class Report {
     );
   }
 }
+
