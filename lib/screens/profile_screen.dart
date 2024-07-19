@@ -1,38 +1,28 @@
-// lib/screens/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../widgets/report_card.dart';
-import '../models/report.dart';
-import '../models/user_reports.dart';
+import '../providers/report_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> mockReports = [
-    {
-      'category': 'Road Issue',
-      'description': 'Large pothole on Main Street',
-      'status': 'Pending',
-      'date': DateTime.now().subtract(const Duration(days: 2)),
-    },
-    {
-      'category': 'Streetlight Problem',
-      'description': 'Broken streetlight near Central Park',
-      'status': 'In Progress',
-      'date': DateTime.now().subtract(const Duration(days: 5)),
-    },
-    {
-      'category': 'Garbage',
-      'description': 'Overflowing trash bins on Oak Avenue',
-      'status': 'Resolved',
-      'date': DateTime.now().subtract(const Duration(days: 10)),
-    },
-  ];
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user reports when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final reportProvider = Provider.of<ReportProvider>(context, listen: false);
+      reportProvider.getReportsByUser("3fa85f64-5717-4562-b3fc-2c963f66afa6"); // Replace with actual user ID
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userReports = UserReports.getReports();
-    final allReports = [...userReports, ...mockReports];
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -74,7 +64,8 @@ class ProfileScreen extends StatelessWidget {
                         radius: 30,
                         child: SvgPicture.asset(
                           'asset/image/profile.svg',
-                          fit: BoxFit.cover,)
+                          fit: BoxFit.cover,
+                        )
                       ),
                       SizedBox(width: 16),
                       Column(
@@ -108,31 +99,23 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final report = allReports[index];
-                return GestureDetector(
-                  onTap: () {
-                    context.push('/report-details', extra: report);
+          Consumer<ReportProvider>(
+            builder: (context, reportProvider, child) {
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final report = reportProvider.reports[index];
+                    return GestureDetector(
+                      onTap: () {
+                        context.push('/report-details', extra: report);
+                      },
+                      child: ReportCard(report: report),
+                    );
                   },
-                  child: report is Report
-                    ? ReportCard(
-                        category: report.category,
-                        description: report.description,
-                        status: report.status,
-                        date: report.createdAt,
-                      )
-                    : ReportCard(
-                        category: (report as Map<String, dynamic>)['category'],
-                        description: (report)['description'],
-                        status: (report)['status'],
-                        date: (report)['date'],
-                      ),
-                );
-              },
-              childCount: allReports.length,
-            ),
+                  childCount: reportProvider.reports.length,
+                ),
+              );
+            },
           ),
         ],
       ),

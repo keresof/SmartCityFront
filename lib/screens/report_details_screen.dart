@@ -28,7 +28,7 @@ class ReportDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Category: ${isReportObject ? report.category : report['category']}',
+                    'Category: ${isReportObject ? report.status : report['status']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 8),

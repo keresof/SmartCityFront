@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_city_app/screens/report_details_screen.dart';
 import 'models/app_state.dart';
+import 'providers/report_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/map_selections_screen.dart';
 import 'screens/settings_screen.dart';
@@ -15,11 +16,17 @@ import 'screens/profile_screen.dart';
 import 'screens/email_login_screen.dart';
 import 'screens/notifications_screen.dart';
 
-
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ReportProvider()),
+        // ... other providers
+      ],
+      child: MyApp(),
+    ),
+  );
 }
-
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -31,8 +38,8 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => LoginScreen(),
       ),
       GoRoute(
-      path: '/report-details',
-      builder: (context, state) => ReportDetailsScreen(report: state.extra),
+        path: '/report-details',
+        builder: (context, state) => ReportDetailsScreen(report: state.extra),
       ),
       GoRoute(
         path: '/signup',
@@ -82,8 +89,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppState(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AppState()),
+        ChangeNotifierProvider(create: (context) => ReportProvider()),
+      ],
       child: Consumer<AppState>(
         builder: (context, appState, child) {
           return MaterialApp.router(
