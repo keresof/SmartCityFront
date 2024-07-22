@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_city_app/screens/report_details_screen.dart';
 import 'models/app_state.dart';
 import 'providers/report_provider.dart';
+import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/map_selections_screen.dart';
 import 'screens/settings_screen.dart';
@@ -21,88 +22,89 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ReportProvider()),
-        // ... other providers
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AppState()),
       ],
       child: MyApp(),
     ),
   );
 }
+
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
-  final GoRouter _router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => LoginScreen(),
-      ),
-      GoRoute(
-        path: '/report-details',
-        builder: (context, state) => ReportDetailsScreen(report: state.extra),
-      ),
-      GoRoute(
-        path: '/signup',
-        builder: (context, state) => SignUpScreen(),
-      ),
-      GoRoute(
-        path: '/otp',
-        builder: (context, state) => OTPScreen(),
-      ),
-      GoRoute(
-        path: '/email-login',
-        builder: (context, state) => EmailLoginScreen(),
-      ),
-      ShellRoute(
-        builder: (context, state, child) {
-          return ScaffoldWithNavBar(child: child);
-        },
-        routes: [
-          GoRoute(
-            path: '/home',
-            builder: (context, state) => HomeScreen(),
-          ),
-          GoRoute(
-            path: '/report',
-            builder: (context, state) => ReportScreen(),
-          ),
-          GoRoute(
-            path: '/profile',
-            builder: (context, state) => ProfileScreen(),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => SettingsScreen(),
-      ),
-      GoRoute(
-        path: '/notifications',
-        builder: (context, state) => NotificationsScreen(),
-      ),
-      GoRoute(
-        path: '/map-selection',
-        builder: (context, state) => MapSelectionScreen(),
-      ),
-    ],
-  );
-
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => AppState()),
-        ChangeNotifierProvider(create: (context) => ReportProvider()),
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        return MaterialApp.router(
+          routerConfig: _router(authProvider),
+          title: 'Smart City App',
+          theme: context.watch<AppState>().isDarkMode
+              ? ThemeData.dark()
+              : ThemeData.light(),
+        );
+      },
+    );
+  }
+
+  GoRouter _router(AuthProvider authProvider) {
+    return GoRouter(
+      initialLocation: '/',
+    
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => LoginScreen(),
+        ),
+        GoRoute(
+          path: '/report-details',
+          builder: (context, state) => ReportDetailsScreen(report: state.extra),
+        ),
+        GoRoute(
+          path: '/signup',
+          builder: (context, state) => SignUpScreen(),
+        ),
+        GoRoute(
+          path: '/otp',
+          builder: (context, state) => OTPScreen(),
+        ),
+        GoRoute(
+          path: '/email-login',
+          builder: (context, state) => EmailLoginScreen(),
+        ),
+        ShellRoute(
+          builder: (context, state, child) {
+            return ScaffoldWithNavBar(child: child);
+          },
+          routes: [
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => HomeScreen(),
+            ),
+            GoRoute(
+              path: '/report',
+              builder: (context, state) => ReportScreen(),
+            ),
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => ProfileScreen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => SettingsScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => NotificationsScreen(),
+        ),
+        GoRoute(
+          path: '/map-selection',
+          builder: (context, state) => MapSelectionScreen(),
+        ),
       ],
-      child: Consumer<AppState>(
-        builder: (context, appState, child) {
-          return MaterialApp.router(
-            routerConfig: _router,
-            title: 'Smart City App',
-            theme: appState.isDarkMode ? ThemeData.dark() : ThemeData.light(),
-          );
-        },
-      ),
     );
   }
 }

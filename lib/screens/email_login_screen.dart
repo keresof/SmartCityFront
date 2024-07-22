@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
+import '../providers/auth_provider.dart';
 
 class EmailLoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -8,6 +10,8 @@ class EmailLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return CustomPopScope(
       backPath: '/',
       child: Scaffold(
@@ -42,9 +46,25 @@ class EmailLoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {
-                  // TODO: Implement email login logic
-                  context.go('/home');
+                onPressed: () async {
+                  final email = emailController.text.trim();
+                  final password = passwordController.text.trim();
+                  
+                  if (email.isEmpty || password.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Please enter both email and password')),
+                    );
+                    return;
+                  }
+
+                  final success = await authProvider.signIn(email, password);
+                  if (success) {
+                    context.go('/home');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Login failed. Please check your credentials.')),
+                    );
+                  }
                 },
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
@@ -55,6 +75,9 @@ class EmailLoginScreen extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   // TODO: Implement forgot password functionality
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Forgot password functionality not implemented yet')),
+                  );
                 },
                 child: Text('Forgot Password?'),
               ),

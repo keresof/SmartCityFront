@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
+import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return CustomPopScope(
       isRoot: true,
       child: Scaffold(
@@ -24,21 +28,40 @@ class LoginScreen extends StatelessWidget {
                   context,
                   'asset/image/google_logo.svg',
                   'Login with Google',
-                  () {},
+                  () async {
+                    bool success = await authProvider.signInWithGoogle();
+                    if (success) {
+                      context.go('/home');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Google login failed')),
+                      );
+                    }
+                  },
                 ),
                 SizedBox(height: 10),
                 _buildLoginButton(
                   context,
                   'asset/image/facebook_logo.svg',
                   'Login with Facebook',
-                  () {},
+                  () {
+                    // Placeholder for Facebook login
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Facebook login not implemented')),
+                    );
+                  },
                 ),
                 SizedBox(height: 10),
                 _buildLoginButton(
                   context,
                   'asset/image/instagram_logo.svg',
                   'Login with Instagram',
-                  () {},
+                  () {
+                    // Placeholder for Instagram login
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Instagram login not implemented')),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(

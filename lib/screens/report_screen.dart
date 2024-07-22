@@ -1,3 +1,4 @@
+// lib/screens/report_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:smart_city_app/providers/auth_provider.dart';
 import '../models/report.dart';
 import '../providers/report_provider.dart';
+import '../services/storage_service.dart';
 
 class ReportScreen extends StatefulWidget {
   @override
@@ -20,6 +23,8 @@ class _ReportScreenState extends State<ReportScreen> {
   String? selectedCategory;
   LatLng? selectedLocation;
   String? selectedAddress;
+  final StorageService _storageService = StorageService();
+  List<String> uploadedMediaUrls = [];
 
   List<String> categories = [
     'Road Issue',
@@ -74,90 +79,78 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  void _showPreviewDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Preview Report'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Title: ${titleController.text}', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text('Category: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(descriptionController.text),
-              SizedBox(height: 8),
-              Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(selectedAddress ?? 'Not selected'),
-              SizedBox(height: 8),
-              if (selectedLocation != null)
-                Container(
-                  height: 200,
-                  width: double.infinity,
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: selectedLocation!,
-                      zoom: 15,
-                    ),
-                    markers: {
-                      Marker(
-                        markerId: MarkerId('selected_location'),
-                        position: selectedLocation!,
-                      ),
-                    },
-                    liteModeEnabled: true,
-                    myLocationButtonEnabled: false,
-                    zoomControlsEnabled: false,
-                  ),
-                ),
-              SizedBox(height: 8),
-              Text('Images: ${images.length}', style: TextStyle(fontWeight: FontWeight.bold)),
-              if (images.isNotEmpty)
-                Container(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: images.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Image.file(
-                          File(images[index].path),
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          ElevatedButton(
-            child: Text('Submit'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _submitReport();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+  Future<void> _uploadPhotos() async {
+    for (var image in images) {
+      final url = await _storageService.uploadFile(File(image.path));
+      uploadedMediaUrls.add(url);
+    }
+  }
 
-  void _submitReport() {
+  void _showPreviewDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Preview Report'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Title: ${titleController.text}', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Text('Category: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(descriptionController.text),
+                SizedBox(height: 8),
+                Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(selectedAddress ?? 'Not selected'),
+                SizedBox(height: 8),
+                if (selectedLocation != null)
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: selectedLocation!,
+                        zoom: 15,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: MarkerId('selected_location'),
+                          position: selectedLocation!,
+                        ),
+                      },
+                      liteModeEnabled: true,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                    ),
+                  ),
+                SizedBox(height: 8),
+                Text('Images: ${images.length}', style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('Submit'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _submitReport();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _submitReport() async {
     if (titleController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         selectedCategory == null ||
@@ -169,31 +162,82 @@ class _ReportScreenState extends State<ReportScreen> {
       return;
     }
 
-    final report = Report(
-      title: titleController.text,
-      description: descriptionController.text,
-      location: [selectedAddress!],
-      status: categories.indexOf(selectedCategory!),
-      mediaUrls: images.map((image) => image.path).toList(),
-      coordinates: [selectedLocation!.latitude, selectedLocation!.longitude],
-      userId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Replace with actual user ID when authentication is implemented
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You must be logged in to submit a report')),
+      );
+      return;
+    }
+
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(child: CircularProgressIndicator());
+      },
     );
 
-    final reportProvider = Provider.of<ReportProvider>(context, listen: false);
-    reportProvider.createReport(report).then((_) {
+    try {
+      // Upload photos
+      await _uploadPhotos();
+
+      final report = Report(
+        title: titleController.text,
+        description: descriptionController.text,
+        location: [selectedAddress!],
+        status: categories.indexOf(selectedCategory!),
+        mediaUrls: uploadedMediaUrls,
+        coordinates: [selectedLocation!.latitude, selectedLocation!.longitude],
+        userId: authProvider.user!.id,
+      );
+
+      final reportProvider = Provider.of<ReportProvider>(context, listen: false);
+      await reportProvider.createReport(report);
+
+      // Hide loading indicator
+      Navigator.of(context).pop();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Report submitted successfully')),
       );
       context.go('/home');
-    }).catchError((error) {
+    } catch (error) {
+      // Hide loading indicator
+      Navigator.of(context).pop();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to submit report: $error')),
       );
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    if (!authProvider.isAuthenticated) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Report a Problem'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('You must be logged in to submit a report.'),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.go('/'),
+                child: Text('Go to Login'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Report a Problem'),
