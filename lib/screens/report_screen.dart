@@ -154,6 +154,9 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   void _submitReport() async {
+    // Unfocus all text fields
+    FocusScope.of(context).unfocus();
+
     if (titleController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         selectedCategory == null ||
@@ -258,124 +261,127 @@ class _ReportScreenState extends State<ReportScreen> {
       appBar: AppBar(
         title: Text('Report a Problem'),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  TextField(
-                    controller: titleController,
-                    decoration: InputDecoration(labelText: 'Title'),
-                  ),
-                  SizedBox(height: 16.0),
-                  DropdownButtonFormField<String>(
-                    value: selectedCategory,
-                    decoration: InputDecoration(labelText: 'Category'),
-                    items: categories.map((String category) {
-                      return DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCategory = newValue;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  TextField(
-                    controller: descriptionController,
-                    decoration: InputDecoration(labelText: 'Description'),
-                    maxLines: 3,
-                  ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _selectLocation,
-                    child: Text(selectedLocation != null 
-                      ? 'Change Location' 
-                      : 'Select Location'),
-                  ),
-                  if (selectedAddress != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        selectedAddress!,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(labelText: 'Title'),
                     ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () => _pickImage(ImageSource.camera),
-                        icon: Icon(Icons.camera_alt),
-                        label: Text('Take Photo'),
+                    SizedBox(height: 16.0),
+                    DropdownButtonFormField<String>(
+                      value: selectedCategory,
+                      decoration: InputDecoration(labelText: 'Category'),
+                      items: categories.map((String category) {
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCategory = newValue;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    TextField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(labelText: 'Description'),
+                      maxLines: 3,
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _selectLocation,
+                      child: Text(selectedLocation != null 
+                        ? 'Change Location' 
+                        : 'Select Location'),
+                    ),
+                    if (selectedAddress != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          selectedAddress!,
+                          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        ),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () => _pickImage(ImageSource.gallery),
-                        icon: Icon(Icons.photo_library),
-                        label: Text('Choose from Gallery'),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
-                  images.isNotEmpty
-                      ? GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 4,
-                            mainAxisSpacing: 4,
-                          ),
-                          itemCount: images.length,
-                          itemBuilder: (context, index) {
-                            return Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Image.file(
-                                  File(images[index].path),
-                                  fit: BoxFit.cover,
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: IconButton(
-                                    icon: Icon(Icons.cancel, color: Colors.red),
-                                    onPressed: () {
-                                      setState(() {
-                                        images.removeAt(index);
-                                      });
-                                    },
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(ImageSource.camera),
+                          icon: Icon(Icons.camera_alt),
+                          label: Text('Take Photo'),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => _pickImage(ImageSource.gallery),
+                          icon: Icon(Icons.photo_library),
+                          label: Text('Choose from Gallery'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    images.isNotEmpty
+                        ? GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 4,
+                              mainAxisSpacing: 4,
+                            ),
+                            itemCount: images.length,
+                            itemBuilder: (context, index) {
+                              return Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Image.file(
+                                    File(images[index].path),
+                                    fit: BoxFit.cover,
                                   ),
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      : Text('No images selected.', textAlign: TextAlign.center),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _showPreviewDialog,
-                    child: Text('Preview Report'),
-                  ),
-                ],
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.cancel, color: Colors.red),
+                                      onPressed: () {
+                                        setState(() {
+                                          images.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : Text('No images selected.', textAlign: TextAlign.center),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _showPreviewDialog,
+                      child: Text('Preview Report'),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (_isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: CircularProgressIndicator(),
+            if (_isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

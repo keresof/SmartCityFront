@@ -79,7 +79,7 @@ class AuthService {
         await prefs.setString('refreshToken', response.data['refreshToken']);
         final tokenPayload = response.data['token'].split('.')[1];
         final tokenLength = tokenPayload.length;
-        late  final padding = '=' * (4 - (tokenLength % 4)).toInt();
+        late  final padding = '=' * ((4 - (tokenLength % 4))%4).toInt();
         final finalPayload = tokenPayload + padding;
         final decodedPayload = String.fromCharCodes(base64Url.decode(finalPayload ));
         final payload = jsonDecode(decodedPayload);

@@ -25,52 +25,54 @@ class LoginScreen extends StatelessWidget {
               children: <Widget>[
                 _buildLogo(),
                 SizedBox(height: 40),
-                _buildLoginButton(
-                  context,
-                  'asset/image/google_logo.svg',
-                  'Login with Google',
-                  () => _handleGoogleSignIn(context),
-                ),
-                SizedBox(height: 10),
-                _buildLoginButton(
-                  context,
-                  'asset/image/facebook_logo.svg',
-                  'Login with Facebook',
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Facebook login not implemented')),
-                    );
-                  },
-                ),
-                SizedBox(height: 10),
-                _buildLoginButton(
-                  context,
-                  'asset/image/instagram_logo.svg',
-                  'Login with Instagram',
-                  () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Instagram login not implemented')),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => context.go('/signup'),
-                  child: Text('Don\'t have an account? Sign Up'),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () => context.go('/home'),
-                  child: Text('Continue without login'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
+                if (!authProvider.isAuthenticated) ...[
+                  _buildLoginButton(
+                    context,
+                    'asset/image/google_logo.svg',
+                    'Login with Google',
+                    () => _handleGoogleSignIn(context),
                   ),
-                ),
-                SizedBox(height: 10),
-                TextButton(
-                  onPressed: () => context.go('/email-login'),
-                  child: Text('Login with Email'),
-                ),
+                  SizedBox(height: 10),
+                  _buildLoginButton(
+                    context,
+                    'asset/image/facebook_logo.svg',
+                    'Login with Facebook',
+                    () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Facebook login not implemented')),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  _buildLoginButton(
+                    context,
+                    'asset/image/instagram_logo.svg',
+                    'Login with Instagram',
+                    () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Instagram login not implemented')),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => context.go('/signup'),
+                    child: Text('Don\'t have an account? Sign Up'),
+                  ),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () => context.go('/email-login'),
+                    child: Text('Login with Email'),
+                  ),
+                ] else ...[
+                  ElevatedButton(
+                    onPressed: () => context.go('/home'),
+                    child: Text('Continue'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
