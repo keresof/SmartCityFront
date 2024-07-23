@@ -6,7 +6,7 @@ import 'dart:convert';
 import '../services/auth_service.dart';
 
 class StorageService {
-  final String baseUrl = 'https://4065-85-102-229-52.ngrok-free.app/api'; // Update with your API URL
+  final String baseUrl = 'https://smartcity.demo.xn--glolu-jua30a.com/api'; // Update with your API URL
   final AuthService _authService = AuthService();
 
   Future<String> uploadFile(File file) async {

@@ -31,6 +31,10 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(Icons.notifications),
             onPressed: () => context.push('/notifications'),
           ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => context.push('/settings'),
+          ),
         ],
       ),
       body: ListView.builder(

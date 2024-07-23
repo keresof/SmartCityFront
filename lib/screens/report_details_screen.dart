@@ -1,9 +1,10 @@
-// lib/screens/report_details_screen.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import '../models/report.dart';
+import '../providers/report_provider.dart';
+
 
 class ReportDetailsScreen extends StatelessWidget {
   final dynamic report;
@@ -13,6 +14,7 @@ class ReportDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isReportObject = report is Report;
+    final reportProvider = Provider.of<ReportProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -90,28 +92,31 @@ class ReportDetailsScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
-                            child: Image.network(
-                              report.mediaUrls[index],
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  width: 100,
-                                  height: 100,
-                                  color: Colors.grey[300],
-                                  child: Icon(Icons.error),
-                                );
+                            child: FutureBuilder<File>(
+                              future: reportProvider.getFile(report.mediaUrls[index]),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                  return Image.file(
+                                    snapshot.data!,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    color: Colors.grey[300],
+                                    child: Icon(Icons.error),
+                                  );
+                                } else {
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    color: Colors.grey[300],
+                                    child: Center(child: CircularProgressIndicator()),
+                                  );
+                                }
                               },
                             ),
                           );

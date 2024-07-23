@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:smart_city_app/services/auth_service.dart';
 import '../models/user.dart';
@@ -23,6 +25,11 @@ class AuthProvider with ChangeNotifier {
     return await _authService.signUpWithEmail(email, password);
   }
 
+  Future<void> setUser(User user) async {
+    _user = user;
+    notifyListeners();
+  }
+
   Future<bool> signOut() async {
     final success = await _authService.signOut();
     if (success) {
@@ -33,31 +40,61 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> checkAuthStatus() async {
-    final token = await _authService.getToken();
-    _user = token != null ? User(id: '', email: '') : null; // You might want to fetch user details here
-    notifyListeners();
+  final token = await _authService.getToken();
+  if (token != null) {
+    try {
+      // Decode the token to get user information
+      final parts = token.split('.');
+      if (parts.length == 3) {
+        final payload = parts[1];
+        final normalized = base64Url.normalize(payload);
+        final resp = utf8.decode(base64Url.decode(normalized));
+        final payloadMap = json.decode(resp);
+        
+        _user = User(id: payloadMap['sub'], email: payloadMap['email']);
+      } else {
+        _user = null;
+      }
+    } catch (e) {
+      print('Error decoding token: $e');
+      _user = null;
+    }
+  } else {
+    _user = null;
   }
+  notifyListeners();
+}
 
   Future<bool> signInWithGoogle() async {
+    print("Starting Google Sign-In process");
     final user = await _authService.signInWithGoogle();
+    print("Returned user from AuthService: $user");
     if (user != null) {
       _user = user;
       notifyListeners();
       return true;
     }
+    
+    print("Google Sign-In failed: user is null");
     return false;
   }
 
-  // Placeholder methods for other social logins
   Future<bool> signInWithFacebook() async {
-    // Placeholder implementation
     print('Facebook login not implemented');
     return false;
   }
 
   Future<bool> signInWithInstagram() async {
-    // Placeholder implementation
     print('Instagram login not implemented');
     return false;
+  }
+
+  Future<bool> refreshToken() async {
+    final success = await _authService.refreshToken();
+    if (!success) {
+      _user = null;
+      notifyListeners();
+    }
+    return success;
   }
 }

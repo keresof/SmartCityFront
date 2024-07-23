@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../widgets/report_card.dart';
 import '../providers/report_provider.dart';
+import '../providers/auth_provider.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -16,13 +18,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     // Fetch user reports when the screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final reportProvider = Provider.of<ReportProvider>(context, listen: false);
-      reportProvider.getReportsByUser("3fa85f64-5717-4562-b3fc-2c963f66afa6"); // Replace with actual user ID
+      reportProvider.getReportsByUser(authProvider.user!.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -31,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text('John Doe'),
+              title: Text(user?.email ?? 'User'),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -51,6 +57,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () => context.push('/settings'),
+              ),
+            ],
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -72,11 +84,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'John Doe',
+                            user?.email ?? 'User',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           Text(
-                            'john.doe@example.com',
+                            user?.email ?? '',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ],
@@ -101,6 +113,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Consumer<ReportProvider>(
             builder: (context, reportProvider, child) {
+              if (reportProvider.reports.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Text('No reports yet. Create your first report!'),
+                  ),
+                );
+              }
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -118,6 +137,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/report'),
+        child: Icon(Icons.add),
+        tooltip: 'Create New Report',
       ),
     );
   }

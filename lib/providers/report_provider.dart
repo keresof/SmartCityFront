@@ -1,6 +1,9 @@
+// lib/providers/report_provider.dart
+
 import 'package:flutter/foundation.dart';
 import '../services/report_service.dart';
 import '../models/report.dart';
+import 'dart:io';
 
 class ReportProvider with ChangeNotifier {
   final ReportService _reportService = ReportService();
@@ -8,11 +11,13 @@ class ReportProvider with ChangeNotifier {
 
   List<Report> get reports => _reports;
 
-  Future<void> createReport(Report report) async {
+  Future<String> createReport(Report report) async {
     try {
-      final newReport = await _reportService.createReport(report);
+      final newReportId = await _reportService.createReport(report);
+      final newReport = await _reportService.getReport(newReportId);
       _reports.add(newReport);
       notifyListeners();
+      return newReportId;
     } catch (e) {
       print('Error creating report: $e');
       rethrow;
@@ -76,6 +81,24 @@ class ReportProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error getting user reports: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> uploadFile(String reportId, File file) async {
+    try {
+      return await _reportService.uploadFile(reportId, file);
+    } catch (e) {
+      print('Error uploading file: $e');
+      rethrow;
+    }
+  }
+
+  Future<File> getFile(String fileName) async {
+    try {
+      return await _reportService.getFile(fileName);
+    } catch (e) {
+      print('Error getting file: $e');
       rethrow;
     }
   }

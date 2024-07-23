@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
 import '../providers/auth_provider.dart';
+import '../models/user.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -28,16 +29,7 @@ class LoginScreen extends StatelessWidget {
                   context,
                   'asset/image/google_logo.svg',
                   'Login with Google',
-                  () async {
-                    bool success = await authProvider.signInWithGoogle();
-                    if (success) {
-                      context.go('/home');
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Google login failed')),
-                      );
-                    }
-                  },
+                  () => _handleGoogleSignIn(context),
                 ),
                 SizedBox(height: 10),
                 _buildLoginButton(
@@ -45,7 +37,6 @@ class LoginScreen extends StatelessWidget {
                   'asset/image/facebook_logo.svg',
                   'Login with Facebook',
                   () {
-                    // Placeholder for Facebook login
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Facebook login not implemented')),
                     );
@@ -57,7 +48,6 @@ class LoginScreen extends StatelessWidget {
                   'asset/image/instagram_logo.svg',
                   'Login with Instagram',
                   () {
-                    // Placeholder for Instagram login
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Instagram login not implemented')),
                     );
@@ -105,6 +95,19 @@ class LoginScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInWithGoogle();
+
+    if (success) {
+      context.go('/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google sign-in failed')),
+      );
+    }
   }
 
   Widget _buildLoginButton(BuildContext context, String logoPath, String text, VoidCallback onPressed) {
