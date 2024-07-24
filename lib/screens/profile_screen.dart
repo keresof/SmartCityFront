@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(user?.email ?? 'User'),
+              title: Text(user?.email ?? 'Anonim Kullanıcı'),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user?.email ?? 'User',
+                            user?.email ?? 'Anonim Kullanıcı',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           Text(
@@ -100,11 +100,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () {
                       // TODO: Implement edit profile functionality
                     },
-                    child: const Text('Edit Profile'),
+                    child: const Text('Profil Düzenle'),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Your Reports',
+                    'Raporlarım',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ],
@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (reportProvider.reports.isEmpty) {
                 return SliverFillRemaining(
                   child: Center(
-                    child: Text('No reports yet. Create your first report!'),
+                    child: Text('Rapor bulunamadı.'),
                   ),
                 );
               }
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/report'),
         child: Icon(Icons.add),
-        tooltip: 'Create New Report',
+        tooltip: 'Rapor Oluştur',
       ),
     );
   }

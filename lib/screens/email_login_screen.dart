@@ -18,7 +18,7 @@ class EmailLoginScreen extends StatelessWidget {
       backPath: '/',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Login with Email'),
+          title: Text('Email ile Kaydol'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () => context.go('/'),
@@ -41,7 +41,7 @@ class EmailLoginScreen extends StatelessWidget {
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Şifre',
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
@@ -54,7 +54,7 @@ class EmailLoginScreen extends StatelessWidget {
                   
                   if (email.isEmpty || password.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Please enter both email and password')),
+                      SnackBar(content: Text('Lütfen email ve şifrenizi girin.')),
                     );
                     return;
                   }
@@ -64,11 +64,11 @@ class EmailLoginScreen extends StatelessWidget {
                     context.go('/home');
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Login failed. Please check your credentials.')),
+                      SnackBar(content: Text('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.')),
                     );
                   }
                 },
-                child: Text('Login'),
+                child: Text('Giriş Yap'),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                 ),
@@ -78,10 +78,10 @@ class EmailLoginScreen extends StatelessWidget {
                 onPressed: () {
                   // TODO: Implement forgot password functionality
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Forgot password functionality not implemented yet')),
+                    SnackBar(content: Text('Giriş yaparken sorun mu yaşıyorsunuz? Lütfen destek ekibimizle iletişime geçin.')),
                   );
                 },
-                child: Text('Forgot Password?'),
+                child: Text('Şifremi Unuttum'),
               ),
             ],
           ),

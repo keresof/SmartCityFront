@@ -4,10 +4,10 @@ import '../widgets/custom_pop_scope.dart';
 
 class NotificationsScreen extends StatelessWidget {
   final List<String> notifications = [
-    'Your report has been processed',
-    'New city event: Summer Festival',
-    'Reminder: City council meeting tomorrow',
-    'Your suggestion has been approved',
+    'Raporunuz işleme alındı',
+    'Yol çalışmaları başladı',
+    'Büyük park açılışı ertelendi',
+    'Öneriniz sayesinde şunları yaptık ..',
   ];
 
   @override
@@ -16,7 +16,7 @@ class NotificationsScreen extends StatelessWidget {
       backPath: '/home',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Notifications'),
+          title: Text('Bildirimler'),
         ),
         body: ListView.builder(
           itemCount: notifications.length,

@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       builder: (context, authProvider, _) {
         return MaterialApp.router(
           routerConfig: _router(authProvider),
-          title: 'Smart City App',
+          title: 'Akıllı Şehir Uygulaması',
           theme: context.watch<AppState>().isDarkMode
               ? ThemeData.dark()
               : ThemeData.light(),
@@ -123,9 +123,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Report'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Sana Özel'),
+          BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Rapor'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
         currentIndex: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),

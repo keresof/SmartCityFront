@@ -38,7 +38,7 @@ class ReportCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Reported on: ${_formatDate(report.created ?? DateTime.now())}',
+              'Raporlama Tarihi: ${_formatDate(report.created ?? DateTime.now())}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -53,19 +53,19 @@ class ReportCard extends StatelessWidget {
     switch (report.status) {
       case 0:
         statusColor = Colors.orange;
-        statusText = 'Pending';
+        statusText = 'Beklemede';
         break;
       case 1:
         statusColor = Colors.blue;
-        statusText = 'In Progress';
+        statusText = 'İşlemde';
         break;
       case 2:
         statusColor = Colors.green;
-        statusText = 'Resolved';
+        statusText = 'Çözüldü!';
         break;
       default:
         statusColor = Colors.grey;
-        statusText = 'Unknown';
+        statusText = 'Bilinmiyor';
     }
 
     return Chip(

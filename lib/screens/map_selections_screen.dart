@@ -26,12 +26,12 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied');
+          throw Exception('Konum izni reddedildi');
         }
       }
       
       if (permission == LocationPermission.deniedForever) {
-        throw Exception('Location permissions are permanently denied');
+        throw Exception('Konum izni kalıcı olarak reddedildi');
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -46,7 +46,7 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
     } catch (e) {
       print("Error getting location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to get current location: ${e.toString()}')),
+        SnackBar(content: Text('Konum belirlenirken bir hata oluştu: ${e.toString()}')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -67,7 +67,7 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Location'),
+        title: Text('Konumu Seç'),
       ),
       body: Stack(
         children: [
@@ -92,12 +92,12 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
             child: Column(
               children: [
                 ElevatedButton(
-                  child: Text('Use Current Location'),
+                  child: Text('Şu anki konumumu kullan'),
                   onPressed: _getCurrentLocation,
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(
-                  child: Text('Confirm Selected Location'),
+                  child: Text('Seçilen konumu onayla'),
                   onPressed: () {
                     context.pop(_centerLocation);
                   },

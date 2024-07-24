@@ -5,19 +5,19 @@ import 'package:go_router/go_router.dart';
 class HomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> newsItems = [
     {
-      'title': 'New City Park Opening',
-      'description': 'Grand opening of Central Park scheduled for next month.',
-      'date': '2024-03-15',
+      'Başlık': 'Batıkent Rekrasyon Alanı Açılışı',
+      '': 'Batıkent Rekreasyon Alanı açılış törenine tüm halkımız davetlidir.',
+      'Tarih': '2024-03-15',
     },
     {
-      'title': 'Road Construction Update',
-      'description': 'Main Street construction to be completed by end of week.',
-      'date': '2024-03-10',
+      'Başlık': 'Yol Çalışmaları',
+      '': 'Anayol üzerindeki çalışmalar nedeniyle Gençlik Caddesi trafiğe kapanacaktır.',
+      'Tarih': '2024-03-10',
     },
     {
-      'title': 'City Council Meeting',
-      'description': 'Next city council meeting to discuss budget allocation.',
-      'date': '2024-03-20',
+      'Başlık': 'Bütçe Toplantısı',
+      '': '2024 yılı bütçe toplantısında alınan kararlar..',
+      'Tarih': '2024-03-20',
     },
   ];
 
@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Smart City News'),
+        title: Text('Akıllı Şehir Haberleri'),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                   Text(news['description']),
                   SizedBox(height: 4),
                   Text(
-                    'Date: ${news['date']}',
+                    'Tarih: ${news['date']}',
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ],

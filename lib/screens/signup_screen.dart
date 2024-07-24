@@ -16,7 +16,7 @@ class SignUpScreen extends StatelessWidget {
       backPath: '/',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Sign Up'),
+          title: Text('Kaydol'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () => context.go('/')
@@ -33,7 +33,7 @@ class SignUpScreen extends StatelessWidget {
               ),
               TextField(
                 controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(labelText: 'Şifre'),
                 obscureText: true,
               ),
               ElevatedButton(
@@ -45,21 +45,21 @@ class SignUpScreen extends StatelessWidget {
                     );
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Sign up successful. Please log in.'))
+                        SnackBar(content: Text('Kayıt başarılı. Lütfen giriş yapın.'))
                       );
                       context.go('/');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Sign up failed. Please try again.'))
+                        SnackBar(content: Text('Kayıt başarısız. Lütfen tekrar deneyin.'))
                       );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('An error occurred: $e'))
+                      SnackBar(content: Text('Bir hata meydana geldi!: $e'))
                     );
                   }
                 },
-                child: Text('Sign Up'),
+                child: Text('Kaydol'),
               ),
               // Commented out OTP navigation
               // ElevatedButton(

@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
       isRoot: true,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Smart City App Login'),
+          title: Text('Akıllı Şehir Uygulaması'),
         ),
         body: Center(
           child: Padding(
@@ -29,17 +29,17 @@ class LoginScreen extends StatelessWidget {
                   _buildLoginButton(
                     context,
                     'asset/image/google_logo.svg',
-                    'Login with Google',
+                    'Google ile Giriş Yap',
                     () => _handleGoogleSignIn(context),
                   ),
                   SizedBox(height: 10),
                   _buildLoginButton(
                     context,
                     'asset/image/facebook_logo.svg',
-                    'Login with Facebook',
+                    'Facebook ile Giriş Yap',
                     () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Facebook login not implemented')),
+                        SnackBar(content: Text('Facebook ile kayıt YAKINDA!')),
                       );
                     },
                   ),
@@ -47,27 +47,27 @@ class LoginScreen extends StatelessWidget {
                   _buildLoginButton(
                     context,
                     'asset/image/instagram_logo.svg',
-                    'Login with Instagram',
+                    'Instagram ile Giriş Yap',
                     () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Instagram login not implemented')),
+                        SnackBar(content: Text('Instagram ile kayıt YAKINDA!')),
                       );
                     },
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => context.go('/signup'),
-                    child: Text('Don\'t have an account? Sign Up'),
+                    child: Text('Henüz hesabınız yok mu? Kaydolun'),
                   ),
                   SizedBox(height: 10),
                   TextButton(
                     onPressed: () => context.go('/email-login'),
-                    child: Text('Login with Email'),
+                    child: Text('Email ile Giriş Yap'),
                   ),
                 ] else ...[
                   ElevatedButton(
                     onPressed: () => context.go('/home'),
-                    child: Text('Continue'),
+                    child: Text('Devam Et'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),
                     ),
@@ -89,7 +89,7 @@ class LoginScreen extends StatelessWidget {
           height: 100,
         ),
         Text(
-          'Smart City App',
+          'Akıllı Şehir',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class LoginScreen extends StatelessWidget {
       context.go('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google sign-in failed')),
+        SnackBar(content: Text('Google ile giriş başarısız. Lütfen tekrar deneyin.')),
       );
     }
   }

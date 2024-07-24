@@ -11,14 +11,14 @@ class SettingsScreen extends StatelessWidget {
       backPath: '/home',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Settings'),
+          title: Text('Ayarlar'),
         ),
         body: Consumer<AppState>(
           builder: (context, appState, child) {
             return ListView(
               children: [
                 ListTile(
-                  title: Text('Notifications'),
+                  title: Text('Bildirimler'),
                   trailing: Switch(
                     value: appState.notificationsEnabled,
                     onChanged: (bool value) {
@@ -27,7 +27,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text('Dark Mode'),
+                  title: Text('Karanlık Mod'),
                   trailing: Switch(
                     value: appState.isDarkMode,
                     onChanged: (bool value) {
@@ -36,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text('Language'),
+                  title: Text('Dil'),
                   trailing: DropdownButton<String>(
                     value: appState.language,
                     onChanged: (String? newValue) {
@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
                         appState.setLanguage(newValue);
                       }
                     },
-                    items: <String>['English', 'Spanish', 'French', 'German']
+                    items: <String>['Türkçe', 'English', 'Espaniol', 'Deutch', 'Français']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -54,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text('Logout'),
+                  title: Text('Çıkış Yap'),
                   onTap: () {
                     // TODO: Implement logout logic
                     appState.logout();

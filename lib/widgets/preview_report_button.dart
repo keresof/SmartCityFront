@@ -25,19 +25,19 @@ class PreviewReportButton extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Preview Report'),
+          title: Text('Önizleme'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Category: $category', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Kategori: $category', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Açıklama:', style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(description),
                 SizedBox(height: 8),
-                Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(address ?? 'Address not available'),
+                Text('Konum:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(address ?? 'Adres bilgisi yok!'),
                 SizedBox(height: 8),
                 if (location != null)
                   Container(
@@ -60,7 +60,7 @@ class PreviewReportButton extends StatelessWidget {
                     ),
                   ),
                 SizedBox(height: 8),
-                Text('Images:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Fotoğraflar:', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 4),
                 imagePaths.isNotEmpty
                     ? SizedBox(
@@ -81,17 +81,17 @@ class PreviewReportButton extends StatelessWidget {
                           },
                         ),
                       )
-                    : Text('No images selected'),
+                    : Text('Fotoğraf eklenmedi!'),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: Text('Vazgeç'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              child: Text('Submit'),
+              child: Text('Gönder'),
               onPressed: () {
                 Navigator.of(context).pop();
                 onSubmit();

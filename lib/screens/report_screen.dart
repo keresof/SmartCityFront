@@ -25,12 +25,12 @@ class _ReportScreenState extends State<ReportScreen> {
   bool _isLoading = false;
 
   List<String> categories = [
-    'Road Issue',
-    'Garbage',
-    'Streetlight Problem',
-    'Water Supply',
-    'Public Safety',
-    'Other'
+    'Yol Sorunu',
+    'Çöp Sorunu',
+    'Trafiğe İlişkin Sorun',
+    'Su/Lağım Sorunu',
+    'Halk Sağlığı Sorunu(Salgın, Haşere, vb.)',
+    'Diğer',
   ];
 
   Future<void> _pickImage(ImageSource source) async {
@@ -94,21 +94,21 @@ class _ReportScreenState extends State<ReportScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Preview Report'),
+          title: Text('Rapor Önizlemesi'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Title: ${titleController.text}', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Başlık: ${titleController.text}', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Category: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Kategori: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Açıklama:', style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(descriptionController.text),
                 SizedBox(height: 8),
-                Text('Location:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(selectedAddress ?? 'Not selected'),
+                Text('Konum:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(selectedAddress ?? 'Seçim yapılmadı'),
                 SizedBox(height: 8),
                 if (selectedLocation != null)
                   Container(
@@ -137,13 +137,14 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: Text('İptal'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              child: Text('Submit'),
+              child: Text('Raporla'),
               onPressed: () {
                 Navigator.of(context).pop();
+                FocusScope.of(context).unfocus();  // Unfocus here before submitting
                 _submitReport();
               },
             ),
@@ -154,16 +155,13 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   void _submitReport() async {
-    // Unfocus all text fields
-    FocusScope.of(context).unfocus();
-
     if (titleController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         selectedCategory == null ||
         selectedLocation == null ||
         selectedAddress == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
+        SnackBar(content: Text('Lütfen tüm alanları doldurunuz')),
       );
       return;
     }
@@ -171,7 +169,7 @@ class _ReportScreenState extends State<ReportScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (!authProvider.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You must be logged in to submit a report')),
+        SnackBar(content: Text('Rapor göndermek için giriş yapmalısınız')),
       );
       return;
     }
@@ -211,7 +209,7 @@ class _ReportScreenState extends State<ReportScreen> {
       await reportProvider.updateReport(newReportId, updatedReport);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Report submitted successfully')),
+        SnackBar(content: Text('Rapor başarıyla gönderildi')),
       );
       
       if (mounted) {
@@ -220,7 +218,7 @@ class _ReportScreenState extends State<ReportScreen> {
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit report: $error')),
+          SnackBar(content: Text('Rapor gönderiminde bir hata meydana geldi! : $error')),
         );
       }
     } finally {
@@ -239,17 +237,17 @@ class _ReportScreenState extends State<ReportScreen> {
     if (!authProvider.isAuthenticated) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Report a Problem'),
+          title: Text('Raporla'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('You must be logged in to submit a report.'),
+              Text('Rapor gönderebilmek için giriş yapmalısınız'),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => context.go('/'),
-                child: Text('Go to Login'),
+                child: Text('Giriş Yap'),
               ),
             ],
           ),
@@ -259,129 +257,126 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report a Problem'),
+        title: Text('Raporla'),
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    TextField(
-                      controller: titleController,
-                      decoration: InputDecoration(labelText: 'Title'),
-                    ),
-                    SizedBox(height: 16.0),
-                    DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      decoration: InputDecoration(labelText: 'Category'),
-                      items: categories.map((String category) {
-                        return DropdownMenuItem<String>(
-                          value: category,
-                          child: Text(category),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCategory = newValue;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: descriptionController,
-                      decoration: InputDecoration(labelText: 'Description'),
-                      maxLines: 3,
-                    ),
-                    SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: _selectLocation,
-                      child: Text(selectedLocation != null 
-                        ? 'Change Location' 
-                        : 'Select Location'),
-                    ),
-                    if (selectedAddress != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          selectedAddress!,
-                          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(labelText: 'Başlık'),
+                  ),
+                  SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    decoration: InputDecoration(labelText: 'Kategori'),
+                    items: categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(category),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextField(
+                    controller: descriptionController,
+                    decoration: InputDecoration(labelText: 'Açıklama'),
+                    maxLines: 3,
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _selectLocation,
+                    child: Text(selectedLocation != null 
+                      ? 'Konumu Değiştir' 
+                      : 'Konumu Seç'),
+                  ),
+                  if (selectedAddress != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        selectedAddress!,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () => _pickImage(ImageSource.camera),
-                          icon: Icon(Icons.camera_alt),
-                          label: Text('Take Photo'),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () => _pickImage(ImageSource.gallery),
-                          icon: Icon(Icons.photo_library),
-                          label: Text('Choose from Gallery'),
-                        ),
-                      ],
                     ),
-                    SizedBox(height: 16.0),
-                    images.isNotEmpty
-                        ? GridView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 4,
-                              mainAxisSpacing: 4,
-                            ),
-                            itemCount: images.length,
-                            itemBuilder: (context, index) {
-                              return Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  Image.file(
-                                    File(images[index].path),
-                                    fit: BoxFit.cover,
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.camera),
+                        icon: Icon(Icons.camera_alt),
+                        label: Text('Fotoğraf Çek'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.gallery),
+                        icon: Icon(Icons.photo_library),
+                        label: Text('Galeriden Seç'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  images.isNotEmpty
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 4,
+                            mainAxisSpacing: 4,
+                          ),
+                          itemCount: images.length,
+                          itemBuilder: (context, index) {
+                            return Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.file(
+                                  File(images[index].path),
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: IconButton(
+                                    icon: Icon(Icons.cancel, color: Colors.red),
+                                    onPressed: () {
+                                      setState(() {
+                                        images.removeAt(index);
+                                      });
+                                    },
                                   ),
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: IconButton(
-                                      icon: Icon(Icons.cancel, color: Colors.red),
-                                      onPressed: () {
-                                        setState(() {
-                                          images.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          )
-                        : Text('No images selected.', textAlign: TextAlign.center),
-                    SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: _showPreviewDialog,
-                      child: Text('Preview Report'),
-                    ),
-                  ],
-                ),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      : Text('Resim yüklenmedi', textAlign: TextAlign.center),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _showPreviewDialog,
+                    child: Text('Önizleme'),
+                  ),
+                ],
               ),
             ),
-            if (_isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+          ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
