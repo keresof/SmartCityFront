@@ -44,14 +44,14 @@ class HomeScreen extends StatelessWidget {
           return Card(
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
-              title: Text(news['title']),
+              title: Text(news['Başlık']),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(news['description']),
+                  Text(news['']),
                   SizedBox(height: 4),
                   Text(
-                    'Tarih: ${news['date']}',
+                    'Tarih: ${news['Tarih']}',
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ],

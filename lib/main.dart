@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
         return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           routerConfig: _router(authProvider),
           title: 'Akıllı Şehir Uygulaması',
           theme: context.watch<AppState>().isDarkMode

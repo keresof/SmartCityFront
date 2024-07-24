@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
 import '../providers/auth_provider.dart';
-import '../models/user.dart';
+
 
 class LoginScreen extends StatelessWidget {
   @override

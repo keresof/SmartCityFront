@@ -18,7 +18,7 @@ class ReportDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report Details'),
+        title: Text('Raport Detayları'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -30,28 +30,28 @@ class ReportDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Title: ${isReportObject ? report.title : report['title']}',
+                    'Başlık: ${isReportObject ? report.title : report['title']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Category: ${isReportObject ? _getCategoryName(report.status) : _getCategoryName(report['status'])}',
+                    'Kategori: ${isReportObject ? _getCategoryName(report.status) : _getCategoryName(report['status'])}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Status: ${isReportObject ? _getStatusName(report.status) : _getStatusName(report['status'])}',
+                    'Durum: ${isReportObject ? _getStatusName(report.status) : _getStatusName(report['status'])}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Description:',
+                    'Açıklama:',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(isReportObject ? report.description : report['description']),
                   SizedBox(height: 16),
                   Text(
-                    'Date: ${isReportObject ? report.created.toString() : report['created'].toString()}',
+                    'Tarih: ${isReportObject ? report.lastModified.toString() : report['lastModifed'].toString()}',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
@@ -134,18 +134,18 @@ class ReportDetailsScreen extends StatelessWidget {
 
   String _getCategoryName(int status) {
     List<String> categories = [
-      'Road Issue',
-      'Garbage',
-      'Streetlight Problem',
-      'Water Supply',
-      'Public Safety',
-      'Other'
+      'Yol Sorunu',
+      'Çöp Sorunu',
+      'Trafiğe İlişkin Sorun',
+      'Su/Lağım Sorunu',
+      'Halk Sağlığı Sorunu(Salgın, Haşere, vb.)',
+      'Diğer',
     ];
     return status >= 0 && status < categories.length ? categories[status] : 'Unknown';
   }
 
   String _getStatusName(int status) {
-    List<String> statuses = ['Pending', 'In Progress', 'Resolved', 'Closed'];
+    List<String> statuses = ['Beklemede', 'İşlemde', 'Çözüldü!', 'Kapatıldı'];
     return status >= 0 && status < statuses.length ? statuses[status] : 'Unknown';
   }
 }

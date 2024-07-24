@@ -38,7 +38,7 @@ class ReportCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Raporlama Tarihi: ${_formatDate(report.created ?? DateTime.now())}',
+              'Raporlama Tarihi: ${_formatDate(report.lastModified ?? DateTime.now())}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
