@@ -55,6 +55,7 @@ class SettingsScreen extends StatelessWidget {
                       DropdownMenuItem(value: 'es', child: Text('Español')),
                       DropdownMenuItem(value: 'de', child: Text('Deutsch')),
                       DropdownMenuItem(value: 'fr', child: Text('Français')),
+                      DropdownMenuItem(value: 'ar', child: Text('العربية')),
                     ],
                   ),
                 ),

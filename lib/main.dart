@@ -16,6 +16,7 @@ import 'screens/report_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/email_login_screen.dart';
 import 'screens/notifications_screen.dart';
+import 'dart:ui' as ui;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ void main() async {
         Locale('es'),
         Locale('de'),
         Locale('fr'),
+        Locale('ar'),
       ],
       path: 'asset/translations',
       fallbackLocale: const Locale('en'),
@@ -38,30 +40,37 @@ void main() async {
           ChangeNotifierProvider(create: (_) => AuthProvider()),
           ChangeNotifierProvider(create: (_) => AppState()),
         ],
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
         return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          routerConfig: _router(authProvider),
-          title: 'smart_city_app_title'.tr(),
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          theme: context.watch<AppState>().isDarkMode
-              ? ThemeData.dark()
-              : ThemeData.light(),
-        );
+            debugShowCheckedModeBanner: false,
+            routerConfig: _router(authProvider),
+            title: 'smart_city_app_title'.tr(),
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            theme: context.watch<AppState>().isDarkMode
+                ? ThemeData.dark()
+                : ThemeData.light(),
+            builder: (context, child) {
+              return Directionality(
+                textDirection: context.locale.languageCode == 'ar'
+                    ? ui.TextDirection.rtl
+                    : ui.TextDirection.ltr,
+                child: child!,
+              );
+            });
       },
     );
   }
@@ -72,7 +81,7 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => LoginScreen(),
+          builder: (context, state) => const LoginScreen(),
         ),
         GoRoute(
           path: '/report-details',
@@ -101,17 +110,17 @@ class MyApp extends StatelessWidget {
             ),
             GoRoute(
               path: '/report',
-              builder: (context, state) => ReportScreen(),
+              builder: (context, state) => const ReportScreen(),
             ),
             GoRoute(
               path: '/profile',
-              builder: (context, state) => ProfileScreen(),
+              builder: (context, state) => const ProfileScreen(),
             ),
           ],
         ),
         GoRoute(
           path: '/settings',
-          builder: (context, state) => SettingsScreen(),
+          builder: (context, state) => const SettingsScreen(),
         ),
         GoRoute(
           path: '/notifications',
@@ -119,7 +128,7 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/map-selection',
-          builder: (context, state) => MapSelectionScreen(),
+          builder: (context, state) => const MapSelectionScreen(),
         ),
       ],
     );
