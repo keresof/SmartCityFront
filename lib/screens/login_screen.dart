@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
 import '../providers/auth_provider.dart';
 
-
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,13 @@ class LoginScreen extends StatelessWidget {
       isRoot: true,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Akıllı Şehir Uygulaması'),
+          title: const Text('Akıllı Şehir Uygulaması'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => context.go('/settings'),
+            ),
+          ],
         ),
         body: Center(
           child: Padding(
@@ -107,12 +112,15 @@ class LoginScreen extends StatelessWidget {
       context.go('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google ile giriş başarısız. Lütfen tekrar deneyin.')),
+        SnackBar(
+            content:
+                Text('Google ile giriş başarısız. Lütfen tekrar deneyin.')),
       );
     }
   }
 
-  Widget _buildLoginButton(BuildContext context, String logoPath, String text, VoidCallback onPressed) {
+  Widget _buildLoginButton(BuildContext context, String logoPath, String text,
+      VoidCallback onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(

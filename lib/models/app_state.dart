@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 class AppState with ChangeNotifier {
   bool _isDarkMode = false;
   bool _notificationsEnabled = true;
-  String _language = 'English';
+  String _language = 'en';
   bool _isLoggedIn = false;
 
   bool get isDarkMode => _isDarkMode;

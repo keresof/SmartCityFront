@@ -1,0 +1,16 @@
+{
+    "smart_city_app_title": "Application Smart City",
+    "settings": "Paramètres",
+    "notifications": "Notifications",
+    "darkMode": "Mode sombre",
+    "language": "Langue",
+    "logout": "Déconnexion",
+    "register_with_email": "S'inscrire avec un e-mail",
+    "email": "Email",
+    "password": "Mot de passe",
+    "please_enter_email_and_password": "Veuillez entrer votre email et votre mot de passe",
+    "login_failed_check_email_and_password": "Échec de la connexion. Veuillez vérifier votre email et votre mot de passe",
+    "login": "Login",
+    "login_problem_please_contact_support": "Problème de connexion? Contactez le support",
+    "forgot_password": "Mot de passe oublié?"
+}

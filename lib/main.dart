@@ -1,7 +1,7 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:smart_city_app/screens/report_details_screen.dart';
 import 'models/app_state.dart';
 import 'providers/report_provider.dart';
@@ -17,15 +17,29 @@ import 'screens/profile_screen.dart';
 import 'screens/email_login_screen.dart';
 import 'screens/notifications_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ReportProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => AppState()),
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en'),
+        Locale('tr'),
+        Locale('es'),
+        Locale('de'),
+        Locale('fr'),
       ],
-      child: MyApp(),
+      path: 'asset/translations',
+      fallbackLocale: const Locale('en'),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ReportProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => AppState()),
+        ],
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -40,7 +54,10 @@ class MyApp extends StatelessWidget {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: _router(authProvider),
-          title: 'Akıllı Şehir Uygulaması',
+          title: 'smart_city_app_title'.tr(),
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           theme: context.watch<AppState>().isDarkMode
               ? ThemeData.dark()
               : ThemeData.light(),
@@ -52,7 +69,6 @@ class MyApp extends StatelessWidget {
   GoRouter _router(AuthProvider authProvider) {
     return GoRouter(
       initialLocation: '/',
-    
       routes: [
         GoRoute(
           path: '/',
@@ -112,9 +128,9 @@ class MyApp extends StatelessWidget {
 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -123,10 +139,13 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Sana Özel'),
-          BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Rapor'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        items: [
+          BottomNavigationBarItem(
+              icon: const Icon(Icons.home), label: 'home'.tr()),
+          BottomNavigationBarItem(
+              icon: const Icon(Icons.report), label: 'report'.tr()),
+          BottomNavigationBarItem(
+              icon: const Icon(Icons.person), label: 'profile'.tr()),
         ],
         currentIndex: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),
