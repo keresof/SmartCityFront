@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const LoginScreen(),
+          builder: (context, state) => LoginScreen(),
         ),
         GoRoute(
           path: '/report-details',
@@ -110,11 +110,11 @@ class MyApp extends StatelessWidget {
             ),
             GoRoute(
               path: '/report',
-              builder: (context, state) => const ReportScreen(),
+              builder: (context, state) => ReportScreen(),
             ),
             GoRoute(
               path: '/profile',
-              builder: (context, state) => const ProfileScreen(),
+              builder: (context, state) => ProfileScreen(),
             ),
           ],
         ),
@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/map-selection',
-          builder: (context, state) => const MapSelectionScreen(),
+          builder: (context, state) => MapSelectionScreen(),
         ),
       ],
     );
