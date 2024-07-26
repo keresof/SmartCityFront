@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,8 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  Future<void> _uploadPhotos(String reportId, ReportProvider reportProvider) async {
+  Future<void> _uploadPhotos(
+      String reportId, ReportProvider reportProvider) async {
     for (var image in images) {
       try {
         final url = await reportProvider.uploadFile(reportId, File(image.path));
@@ -94,21 +96,25 @@ class _ReportScreenState extends State<ReportScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Rapor Önizlemesi'),
+          title: Text('report_preview'.tr()),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Başlık: ${titleController.text}', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'title'.tr()}: ${titleController.text}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Kategori: $selectedCategory', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'category'.tr()}: $selectedCategory',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Açıklama:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'description'.tr()}: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(descriptionController.text),
                 SizedBox(height: 8),
-                Text('Konum:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(selectedAddress ?? 'Seçim yapılmadı'),
+                Text('${'location'.tr()}: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(selectedAddress ?? 'selection_not_made'.tr()),
                 SizedBox(height: 8),
                 if (selectedLocation != null)
                   Container(
@@ -131,20 +137,22 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                   ),
                 SizedBox(height: 8),
-                Text('Images: ${images.length}', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Images: ${images.length}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: Text('İptal'),
+              child: Text('cancel').tr(),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              child: Text('Raporla'),
+              child: Text('submit_report').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
-                FocusScope.of(context).unfocus();  // Unfocus here before submitting
+                FocusScope.of(context)
+                    .unfocus(); // Unfocus here before submitting
                 _submitReport();
               },
             ),
@@ -161,7 +169,7 @@ class _ReportScreenState extends State<ReportScreen> {
         selectedLocation == null ||
         selectedAddress == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lütfen tüm alanları doldurunuz')),
+        SnackBar(content: Text('all_fields_required').tr()),
       );
       return;
     }
@@ -169,7 +177,7 @@ class _ReportScreenState extends State<ReportScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (!authProvider.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rapor göndermek için giriş yapmalısınız')),
+        SnackBar(content: Text('login_to_submit_report').tr()),
       );
       return;
     }
@@ -184,12 +192,13 @@ class _ReportScreenState extends State<ReportScreen> {
         description: descriptionController.text,
         location: [selectedAddress!],
         status: categories.indexOf(selectedCategory!),
-        mediaUrls: [],  // We'll upload files after creating the report
+        mediaUrls: [], // We'll upload files after creating the report
         coordinates: [selectedLocation!.latitude, selectedLocation!.longitude],
         userId: authProvider.user!.id,
       );
 
-      final reportProvider = Provider.of<ReportProvider>(context, listen: false);
+      final reportProvider =
+          Provider.of<ReportProvider>(context, listen: false);
       final newReportId = await reportProvider.createReport(report);
 
       // Upload photos after creating the report
@@ -209,16 +218,16 @@ class _ReportScreenState extends State<ReportScreen> {
       await reportProvider.updateReport(newReportId, updatedReport);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rapor başarıyla gönderildi')),
+        SnackBar(content: Text('report_submitted').tr()),
       );
-      
+
       if (mounted) {
         context.go('/profile');
       }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Rapor gönderiminde bir hata meydana geldi! : $error')),
+          SnackBar(content: Text('${'error_submitting_report'.tr()}: $error')),
         );
       }
     } finally {
@@ -233,21 +242,21 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    
+
     if (!authProvider.isAuthenticated) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Raporla'),
+          title: Text('submit_report').tr(),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Rapor gönderebilmek için giriş yapmalısınız'),
+              Text('login_to_submit_report').tr(),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => context.go('/'),
-                child: Text('Giriş Yap'),
+                child: Text('login').tr(),
               ),
             ],
           ),
@@ -257,7 +266,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Raporla'),
+        title: Text('submit_report').tr(),
       ),
       body: Stack(
         children: [
@@ -269,12 +278,12 @@ class _ReportScreenState extends State<ReportScreen> {
                 children: <Widget>[
                   TextField(
                     controller: titleController,
-                    decoration: InputDecoration(labelText: 'Başlık'),
+                    decoration: InputDecoration(labelText: 'title'.tr()),
                   ),
                   SizedBox(height: 16.0),
                   DropdownButtonFormField<String>(
                     value: selectedCategory,
-                    decoration: InputDecoration(labelText: 'Kategori'),
+                    decoration: InputDecoration(labelText: 'category'.tr()),
                     items: categories.map((String category) {
                       return DropdownMenuItem<String>(
                         value: category,
@@ -290,15 +299,15 @@ class _ReportScreenState extends State<ReportScreen> {
                   SizedBox(height: 16.0),
                   TextField(
                     controller: descriptionController,
-                    decoration: InputDecoration(labelText: 'Açıklama'),
+                    decoration: InputDecoration(labelText: 'description'.tr()),
                     maxLines: 3,
                   ),
                   SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _selectLocation,
-                    child: Text(selectedLocation != null 
-                      ? 'Konumu Değiştir' 
-                      : 'Konumu Seç'),
+                    child: Text(selectedLocation != null
+                        ? 'change_location'.tr()
+                        : 'choose_location'.tr()),
                   ),
                   if (selectedAddress != null)
                     Padding(
@@ -315,12 +324,12 @@ class _ReportScreenState extends State<ReportScreen> {
                       ElevatedButton.icon(
                         onPressed: () => _pickImage(ImageSource.camera),
                         icon: Icon(Icons.camera_alt),
-                        label: Text('Fotoğraf Çek'),
+                        label: Text('take_photo'.tr()),
                       ),
                       ElevatedButton.icon(
                         onPressed: () => _pickImage(ImageSource.gallery),
                         icon: Icon(Icons.photo_library),
-                        label: Text('Galeriden Seç'),
+                        label: Text('choose_photo'.tr()),
                       ),
                     ],
                   ),
@@ -329,7 +338,8 @@ class _ReportScreenState extends State<ReportScreen> {
                       ? GridView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             crossAxisSpacing: 4,
                             mainAxisSpacing: 4,
@@ -359,11 +369,12 @@ class _ReportScreenState extends State<ReportScreen> {
                             );
                           },
                         )
-                      : Text('Resim yüklenmedi', textAlign: TextAlign.center),
+                      : Text('photo_not_uploaded'.tr(),
+                          textAlign: TextAlign.center),
                   SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: _showPreviewDialog,
-                    child: Text('Önizleme'),
+                    child: Text('preview').tr(),
                   ),
                 ],
               ),

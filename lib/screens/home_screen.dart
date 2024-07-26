@@ -1,6 +1,7 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Map<String, dynamic>> newsItems = [
@@ -25,7 +26,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Akıllı Şehir Haberleri'),
+        title: Text('smart_city_news').tr(),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
@@ -51,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                   Text(news['']),
                   SizedBox(height: 4),
                   Text(
-                    'Tarih: ${news['Tarih']}',
+                    '${'date'.tr()}: ${news['Tarih']}',
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ],

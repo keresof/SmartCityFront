@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -16,11 +17,9 @@ class SignUpScreen extends StatelessWidget {
       backPath: '/',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Kaydol'),
+          title: Text('register').tr(),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => context.go('/')
-          ),
+              icon: Icon(Icons.arrow_back), onPressed: () => context.go('/')),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -28,38 +27,33 @@ class SignUpScreen extends StatelessWidget {
             children: <Widget>[
               TextField(
                 controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(labelText: 'email'.tr()),
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
                 controller: passwordController,
-                decoration: InputDecoration(labelText: 'Şifre'),
+                decoration: InputDecoration(labelText: 'password'.tr()),
                 obscureText: true,
               ),
               ElevatedButton(
                 onPressed: () async {
                   try {
                     final success = await authProvider.signUp(
-                      emailController.text,
-                      passwordController.text
-                    );
+                        emailController.text, passwordController.text);
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Kayıt başarılı. Lütfen giriş yapın.'))
-                      );
+                          SnackBar(content: Text('signup_success').tr()));
                       context.go('/');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Kayıt başarısız. Lütfen tekrar deneyin.'))
-                      );
+                          SnackBar(content: Text('signup_failed').tr()));
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Bir hata meydana geldi!: $e'))
-                    );
+                        SnackBar(content: Text('${'error'.tr()}: $e')));
                   }
                 },
-                child: Text('Kaydol'),
+                child: Text('register').tr(),
               ),
               // Commented out OTP navigation
               // ElevatedButton(
