@@ -50,12 +50,17 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                     items: const [
-                      DropdownMenuItem(value: 'tr', child: Text('Türkçe')),
-                      DropdownMenuItem(value: 'en', child: Text('English')),
-                      DropdownMenuItem(value: 'es', child: Text('Español')),
-                      DropdownMenuItem(value: 'de', child: Text('Deutsch')),
-                      DropdownMenuItem(value: 'fr', child: Text('Français')),
-                      DropdownMenuItem(value: 'ar', child: Text('العربية')),
+                      DropdownMenuItem(value: 'tr', child: Text('🇹🇷 Türkçe')),
+                      DropdownMenuItem(
+                          value: 'en', child: Text('🇺🇸 English')),
+                      DropdownMenuItem(
+                          value: 'es', child: Text('🇪🇸 Español')),
+                      DropdownMenuItem(
+                          value: 'de', child: Text('🇩🇪 Deutsch')),
+                      DropdownMenuItem(
+                          value: 'fr', child: Text('🇫🇷 Français')),
+                      DropdownMenuItem(
+                          value: 'ar', child: Text('العربية 🇸🇦')),
                     ],
                   ),
                 ),

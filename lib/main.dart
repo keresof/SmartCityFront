@@ -59,12 +59,11 @@ class MyApp extends StatelessWidget {
             title: 'smart_city_app_title'.tr(),
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
-            locale: context.locale,
+            locale: Locale(context.watch<AppState>().language),
             theme: context.watch<AppState>().isDarkMode
                 ? ThemeData.dark()
                 : ThemeData.light(),
             builder: (context, child) {
-              context.setLocale(Locale(AppState().language));
               return Directionality(
                 textDirection: context.locale.languageCode == 'ar'
                     ? ui.TextDirection.rtl
