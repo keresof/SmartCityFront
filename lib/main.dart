@@ -64,6 +64,7 @@ class MyApp extends StatelessWidget {
                 ? ThemeData.dark()
                 : ThemeData.light(),
             builder: (context, child) {
+              context.setLocale(Locale(AppState().language));
               return Directionality(
                 textDirection: context.locale.languageCode == 'ar'
                     ? ui.TextDirection.rtl

@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 class AppState with ChangeNotifier {
+  // TODO: determine dark mode based on device settings
   bool _isDarkMode = false;
   bool _notificationsEnabled = true;
-  String _language = 'en';
+  // TODO: determine locale based on device settings
+  String _language = 'tr';
   bool _isLoggedIn = false;
 
   bool get isDarkMode => _isDarkMode;
