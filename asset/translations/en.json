@@ -1,0 +1,16 @@
+{
+    "smart_city_app_title": "Smart City App",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "logout": "Logout",
+    "register_with_email": "Register with Email",
+    "email": "Email",
+    "password": "Password",
+    "please_enter_email_and_password": "Please enter email and password",
+    "login_failed_check_email_and_password": "Login failed. Please check your email and password",
+    "login": "Login",
+    "login_problem_please_contact_support": "Having trouble signing in? Contact support",
+    "forgot_password": "Forgot Password?"
+  }

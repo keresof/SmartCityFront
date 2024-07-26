@@ -1,0 +1,16 @@
+{
+    "smart_city_app_title": "تطبيق المدينة الذكية",
+    "settings": "الإعدادات",
+    "notifications": "الإشعارات",
+    "darkMode": "الوضع الليلي",
+    "language": "اللغة",
+    "logout": "تسجيل خروج",
+    "register_with_email": "تسجيل باستخدام البريد الإلكتروني",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "please_enter_email_and_password": "الرجاء إدخال البريد الإلكتروني وكلمة المرور",
+    "login_failed_check_email_and_password": "فشل تسجيل الدخول. يرجى التحقق من البريد الإلكتروني وكلمة المرور الخاصة بك",
+    "login": "تسجيل الدخول",
+    "login_problem_please_contact_support": "هل تواجه مشاكل في تسجيل الدخول؟ الرجاء الاتصال بالدعم",
+    "forgot_password": "نسيت كلمة المرور؟"
+}

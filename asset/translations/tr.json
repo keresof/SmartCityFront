@@ -1,0 +1,16 @@
+{
+    "smart_city_app_title": "Akıllı Şehir Uygulaması",
+    "settings": "Ayarlar",
+    "notifications": "Bildirimler",
+    "darkMode": "Karanlık Mod",
+    "language": "Dil",
+    "logout": "Çıkış Yap",
+    "register_with_email": "E-posta ile Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "please_enter_email_and_password": "Lütfen e-posta ve şifrenizi girin",
+    "login_failed_check_email_and_password": "Giriş başarısız. Lütfen e-posta ve şifrenizi kontrol edin",
+    "login": "Giriş Yap",
+    "login_problem_please_contact_support": "Giriş yapmakta sorun mu yaşıyorsunuz? Destek ekibimiz ile iletişime geçin",
+    "forgot_password": "Şifremi Unuttum"
+  }

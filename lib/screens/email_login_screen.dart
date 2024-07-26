@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_pop_scope.dart';
 import '../providers/auth_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EmailLoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -18,7 +19,7 @@ class EmailLoginScreen extends StatelessWidget {
       backPath: '/',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Email ile Kaydol'),
+          title: Text('register_with_email').tr(),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () => context.go('/'),
@@ -32,7 +33,7 @@ class EmailLoginScreen extends StatelessWidget {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'email'.tr(),
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -41,7 +42,7 @@ class EmailLoginScreen extends StatelessWidget {
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Şifre',
+                  labelText: 'password'.tr(),
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
@@ -51,10 +52,12 @@ class EmailLoginScreen extends StatelessWidget {
                 onPressed: () async {
                   final email = emailController.text.trim();
                   final password = passwordController.text.trim();
-                  
+
                   if (email.isEmpty || password.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lütfen email ve şifrenizi girin.')),
+                      SnackBar(
+                          content:
+                              Text('please_enter_email_and_password').tr()),
                     );
                     return;
                   }
@@ -64,11 +67,13 @@ class EmailLoginScreen extends StatelessWidget {
                     context.go('/home');
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.')),
+                      SnackBar(
+                          content: Text('login_failed_check_email_and_password')
+                              .tr()),
                     );
                   }
                 },
-                child: Text('Giriş Yap'),
+                child: Text('login').tr(),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                 ),
@@ -78,10 +83,12 @@ class EmailLoginScreen extends StatelessWidget {
                 onPressed: () {
                   // TODO: Implement forgot password functionality
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Giriş yaparken sorun mu yaşıyorsunuz? Lütfen destek ekibimizle iletişime geçin.')),
+                    SnackBar(
+                        content:
+                            Text('login_problem_please_contact_support').tr()),
                   );
                 },
-                child: Text('Şifremi Unuttum'),
+                child: Text('forgot_password').tr(),
               ),
             ],
           ),

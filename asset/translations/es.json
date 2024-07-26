@@ -1,0 +1,16 @@
+{
+    "smart_city_app_title": "Aplicación de la ciudad inteligente",
+    "settings": "Configuración",
+    "notifications": "Notificaciones",
+    "darkMode": "Modo oscuro",
+    "language": "Idioma",
+    "logout": "Cerrar sesión",
+    "register_with_email": "Registrarse con correo electrónico",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "please_enter_email_and_password": "Por favor, introduzca su correo electrónico y contraseña",
+    "login_failed_check_email_and_password": "Error al iniciar sesión. Por favor, compruebe su correo electrónico y contraseña",
+    "login": "Iniciar sesión",
+    "login_problem_please_contact_support": "¿Tiene problemas para iniciar sesión? Póngase en contacto con el soporte",
+    "forgot_password": "¿Olvidó su contraseña?"
+}
