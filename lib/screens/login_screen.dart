@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +15,7 @@ class LoginScreen extends StatelessWidget {
       isRoot: true,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Akıllı Şehir Uygulaması'),
+          title: const Text('smart_city_app_title').tr(),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
@@ -34,17 +35,18 @@ class LoginScreen extends StatelessWidget {
                   _buildLoginButton(
                     context,
                     'asset/image/google_logo.svg',
-                    'Google ile Giriş Yap',
+                    'login_with_google'.tr(),
                     () => _handleGoogleSignIn(context),
                   ),
                   SizedBox(height: 10),
                   _buildLoginButton(
                     context,
                     'asset/image/facebook_logo.svg',
-                    'Facebook ile Giriş Yap',
+                    'login_with_facebook'.tr(),
                     () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Facebook ile kayıt YAKINDA!')),
+                        SnackBar(
+                            content: Text('facebook_login_coming_soon'.tr())),
                       );
                     },
                   ),
@@ -52,27 +54,28 @@ class LoginScreen extends StatelessWidget {
                   _buildLoginButton(
                     context,
                     'asset/image/instagram_logo.svg',
-                    'Instagram ile Giriş Yap',
+                    'login_with_instagram'.tr(),
                     () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Instagram ile kayıt YAKINDA!')),
+                        SnackBar(
+                            content: Text('instagram_login_coming_soon'.tr())),
                       );
                     },
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => context.go('/signup'),
-                    child: Text('Henüz hesabınız yok mu? Kaydolun'),
+                    child: Text('no_account_register').tr(),
                   ),
                   SizedBox(height: 10),
                   TextButton(
                     onPressed: () => context.go('/email-login'),
-                    child: Text('Email ile Giriş Yap'),
+                    child: Text('login_with_email').tr(),
                   ),
                 ] else ...[
                   ElevatedButton(
                     onPressed: () => context.go('/home'),
-                    child: Text('Devam Et'),
+                    child: Text('continue').tr(),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),
                     ),
@@ -94,12 +97,12 @@ class LoginScreen extends StatelessWidget {
           height: 100,
         ),
         Text(
-          'Akıllı Şehir',
+          'smart_city',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
-        ),
+        ).tr(),
       ],
     );
   }
@@ -112,9 +115,7 @@ class LoginScreen extends StatelessWidget {
       context.go('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text('Google ile giriş başarısız. Lütfen tekrar deneyin.')),
+        SnackBar(content: Text('google_login_failed').tr()),
       );
     }
   }

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../widgets/report_card.dart';
 import '../providers/report_provider.dart';
 import '../providers/auth_provider.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -19,7 +19,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Fetch user reports when the screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final reportProvider = Provider.of<ReportProvider>(context, listen: false);
+      final reportProvider =
+          Provider.of<ReportProvider>(context, listen: false);
       reportProvider.getReportsByUser(authProvider.user!.id);
     });
   }
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(user?.email ?? 'Anonim Kullanıcı'),
+              title: Text(user?.email ?? 'anonymous_user'.tr()),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -73,18 +74,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     children: [
                       CircleAvatar(
-                        radius: 30,
-                        child: SvgPicture.asset(
-                          'asset/image/profile.svg',
-                          fit: BoxFit.cover,
-                        )
-                      ),
+                          radius: 30,
+                          child: SvgPicture.asset(
+                            'asset/image/profile.svg',
+                            fit: BoxFit.cover,
+                          )),
                       SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user?.email ?? 'Anonim Kullanıcı',
+                            user?.email ?? 'anonymous_user'.tr(),
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           Text(
@@ -100,11 +100,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: () {
                       // TODO: Implement edit profile functionality
                     },
-                    child: const Text('Profil Düzenle'),
+                    child: const Text('edit_profile').tr(),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Raporlarım',
+                    'my_reports'.tr(),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ],
@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (reportProvider.reports.isEmpty) {
                 return SliverFillRemaining(
                   child: Center(
-                    child: Text('Rapor bulunamadı.'),
+                    child: Text('no_reports_found').tr(),
                   ),
                 );
               }
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/report'),
         child: Icon(Icons.add),
-        tooltip: 'Rapor Oluştur',
+        tooltip: 'add_report_tooltip'.tr(),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../models/report.dart';
 import '../providers/report_provider.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 
 class ReportDetailsScreen extends StatelessWidget {
   final dynamic report;
@@ -18,7 +18,7 @@ class ReportDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Raport Detayları'),
+        title: Text('report_details').tr(),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -30,28 +30,30 @@ class ReportDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Başlık: ${isReportObject ? report.title : report['title']}',
+                    '${'title'.tr()}: ${isReportObject ? report.title : report['title']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Kategori: ${isReportObject ? _getCategoryName(report.status) : _getCategoryName(report['status'])}',
+                    '${'category'.tr()}: ${isReportObject ? _getCategoryName(report.status) : _getCategoryName(report['status'])}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Durum: ${isReportObject ? _getStatusName(report.status) : _getStatusName(report['status'])}',
+                    '${'status'.tr()}: ${isReportObject ? _getStatusName(report.status) : _getStatusName(report['status'])}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Açıklama:',
+                    'description'.tr(),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  Text(isReportObject ? report.description : report['description']),
+                  Text(isReportObject
+                      ? report.description
+                      : report['description']),
                   SizedBox(height: 16),
                   Text(
-                    'Tarih: ${isReportObject ? report.lastModified.toString() : report['lastModifed'].toString()}',
+                    '${'date'.tr()}: ${isReportObject ? report.lastModified.toString() : report['lastModifed'].toString()}',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],
@@ -62,13 +64,15 @@ class ReportDetailsScreen extends StatelessWidget {
                 height: 200,
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(report.coordinates[0], report.coordinates[1]),
+                    target:
+                        LatLng(report.coordinates[0], report.coordinates[1]),
                     zoom: 15,
                   ),
                   markers: {
                     Marker(
                       markerId: MarkerId('report_location'),
-                      position: LatLng(report.coordinates[0], report.coordinates[1]),
+                      position:
+                          LatLng(report.coordinates[0], report.coordinates[1]),
                     ),
                   },
                 ),
@@ -80,7 +84,7 @@ class ReportDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Images:',
+                      '${'images'.tr()}: ',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     SizedBox(height: 8),
@@ -93,9 +97,12 @@ class ReportDetailsScreen extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: FutureBuilder<File>(
-                              future: reportProvider.getFile(report.mediaUrls[index]),
+                              future: reportProvider
+                                  .getFile(report.mediaUrls[index]),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    snapshot.hasData) {
                                   return Image.file(
                                     snapshot.data!,
                                     width: 100,
@@ -114,7 +121,8 @@ class ReportDetailsScreen extends StatelessWidget {
                                     width: 100,
                                     height: 100,
                                     color: Colors.grey[300],
-                                    child: Center(child: CircularProgressIndicator()),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
                                   );
                                 }
                               },
@@ -141,11 +149,20 @@ class ReportDetailsScreen extends StatelessWidget {
       'Halk Sağlığı Sorunu(Salgın, Haşere, vb.)',
       'Diğer',
     ];
-    return status >= 0 && status < categories.length ? categories[status] : 'Unknown';
+    return status >= 0 && status < categories.length
+        ? categories[status]
+        : 'Unknown';
   }
 
   String _getStatusName(int status) {
-    List<String> statuses = ['Beklemede', 'İşlemde', 'Çözüldü!', 'Kapatıldı'];
-    return status >= 0 && status < statuses.length ? statuses[status] : 'Unknown';
+    List<String> statuses = [
+      'pending'.tr(),
+      'processing'.tr(),
+      'solved'.tr(),
+      'closed'.tr()
+    ];
+    return status >= 0 && status < statuses.length
+        ? statuses[status]
+        : 'Unknown';
   }
 }

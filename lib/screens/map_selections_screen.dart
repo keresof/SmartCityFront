@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MapSelectionScreen extends StatefulWidget {
   @override
@@ -26,12 +27,12 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          throw Exception('Konum izni reddedildi');
+          throw Exception('location_permission_denied'.tr());
         }
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
-        throw Exception('Konum izni kalıcı olarak reddedildi');
+        throw Exception('location_permission_denied_forever'.tr());
       }
 
       Position position = await Geolocator.getCurrentPosition(
@@ -41,12 +42,15 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
       setState(() {
         _centerLocation = newLocation;
       });
-      
-      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
+
+      _mapController
+          ?.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 15));
     } catch (e) {
       print("Error getting location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Konum belirlenirken bir hata oluştu: ${e.toString()}')),
+        SnackBar(
+            content:
+                Text('${'error_determining_location'.tr()}: ${e.toString()}')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -67,7 +71,7 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Konumu Seç'),
+        title: Text('choose_location').tr(),
       ),
       body: Stack(
         children: [
@@ -92,12 +96,12 @@ class _MapSelectionScreenState extends State<MapSelectionScreen> {
             child: Column(
               children: [
                 ElevatedButton(
-                  child: Text('Şu anki konumumu kullan'),
+                  child: Text('use_current_location').tr(),
                   onPressed: _getCurrentLocation,
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(
-                  child: Text('Seçilen konumu onayla'),
+                  child: Text('confirm_location').tr(),
                   onPressed: () {
                     context.pop(_centerLocation);
                   },

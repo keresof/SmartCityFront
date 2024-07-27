@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/custom_pop_scope.dart';
@@ -16,7 +17,7 @@ class NotificationsScreen extends StatelessWidget {
       backPath: '/home',
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Bildirimler'),
+          title: Text('notifications').tr(),
         ),
         body: ListView.builder(
           itemCount: notifications.length,

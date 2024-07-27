@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../models/report.dart';
 
@@ -38,7 +39,8 @@ class ReportCard extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Raporlama Tarihi: ${_formatDate(report.lastModified ?? DateTime.now())}',
+              'report_date'.tr() +
+                  ': ${_formatDate(report.lastModified ?? DateTime.now())}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -53,19 +55,19 @@ class ReportCard extends StatelessWidget {
     switch (report.status) {
       case 0:
         statusColor = Colors.orange;
-        statusText = 'Beklemede';
+        statusText = 'pending'.tr();
         break;
       case 1:
         statusColor = Colors.blue;
-        statusText = 'İşlemde';
+        statusText = 'processing'.tr();
         break;
       case 2:
         statusColor = Colors.green;
-        statusText = 'Çözüldü!';
+        statusText = 'solved'.tr();
         break;
       default:
         statusColor = Colors.grey;
-        statusText = 'Bilinmiyor';
+        statusText = 'unknown'.tr();
     }
 
     return Chip(

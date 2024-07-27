@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -25,19 +26,22 @@ class PreviewReportButton extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Önizleme'),
+          title: Text('preview').tr(),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Kategori: $category', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'category'.tr()}: $category',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('Açıklama:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'description'.tr()}: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(description),
                 SizedBox(height: 8),
-                Text('Konum:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(address ?? 'Adres bilgisi yok!'),
+                Text('${'location'.tr()} :',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(address ?? 'no_address'.tr()),
                 SizedBox(height: 8),
                 if (location != null)
                   Container(
@@ -60,7 +64,8 @@ class PreviewReportButton extends StatelessWidget {
                     ),
                   ),
                 SizedBox(height: 8),
-                Text('Fotoğraflar:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${'photos'.tr()}:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 4),
                 imagePaths.isNotEmpty
                     ? SizedBox(
@@ -81,17 +86,17 @@ class PreviewReportButton extends StatelessWidget {
                           },
                         ),
                       )
-                    : Text('Fotoğraf eklenmedi!'),
+                    : Text('photos_not_attached').tr(),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: Text('Vazgeç'),
+              child: Text('cancel').tr(),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              child: Text('Gönder'),
+              child: Text('submit').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
                 onSubmit();
@@ -107,7 +112,7 @@ class PreviewReportButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _showPreviewDialog(context),
-      child: Text('Preview Report'),
+      child: Text('preview_report').tr(),
     );
   }
 }
